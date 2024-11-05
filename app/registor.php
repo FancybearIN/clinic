@@ -1,5 +1,5 @@
 <?php
-include 'db_config.php';
+include '../config/db_config.php';
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

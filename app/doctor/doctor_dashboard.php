@@ -1,5 +1,5 @@
 <?php
-include './config/db_config.php';
+include '../config/db_config.php';
 session_start();
 
 // Check if the user is logged in and is a doctor

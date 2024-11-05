@@ -1,5 +1,5 @@
 <?php
-include './config/db_config.php'; // Include database configuration
+include '../config/db_config.php'; // Include database configuration
 session_start();
 
 // Define routes and their corresponding content files

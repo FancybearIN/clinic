@@ -1,5 +1,5 @@
 <?php
-include 'db_config.php';
+include '../config/db_config.php';
 
 // Set headers to download as CSV file
 header('Content-Type: text/csv; charset=utf-8');
