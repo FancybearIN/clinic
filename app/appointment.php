@@ -6,6 +6,24 @@ $name = $age = $email = $phone = $reason = $timeslot = "";
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // ... (Your form processing code - same as before)
+
+            if ($stmt->execute()) {
+                $success = "Appointment booked successfully!";
+                // Reset form fields after successful submission
+                $name = $age = $email = $phone = $reason = $timeslot = "";
+
+                // *** Redirect AFTER successful booking ***
+                header("Location: confirmation.php"); 
+                exit; // Important: Stop further script execution
+            } else {
+                $error = "Error booking appointment.";
+            }
+
+    // ... (Rest of your form processing code - same as before)
+} 
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST["name"];
     $age = $_POST["age"];
     $email = $_POST["email"];
