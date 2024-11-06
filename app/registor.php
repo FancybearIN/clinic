@@ -6,6 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];
     $email = $_POST["email"];
     $password = password_hash($_POST["password"], PASSWORD_DEFAULT); // Hash the password
+    $role = $_POST["role"]; // Get the selected role from the form
 
     try {
         // Check if email already exists
@@ -18,17 +19,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error = "Email already exists.";
         } else {
             // Insert new user into database
-            $sql = "INSERT INTO users (username, email, password) VALUES (:username, :email, :password)";
+            $sql = "INSERT INTO users (username, email, password, role) VALUES (:username, :email, :password, :role)"; // Include role in the query
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':username', $username);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $password);
+            $stmt->bindParam(':role', $role); // Bind the role parameter
 
             if ($stmt->execute()) {
                 $_SESSION["loggedin"] = true;
                 $_SESSION["id"] = $conn->lastInsertId();
                 $_SESSION["username"] = $username;
-                header("Location: /home");  // Redirect to home page after registration
+                $_SESSION["role"] = $role; // Store the role in the session
+
+                // Redirect based on user role
+                if ($role == 'doctor') { 
+                    header("Location: /doctor"); // Redirect to doctor dashboard
+                } else {
+                    header("Location: /home");  // Redirect to regular home page
+                }
                 exit;
             } else {
                 $error = "Error creating account.";
@@ -79,6 +88,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="form-group">
                     <label for="password">Password:</label>
                     <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+
+                <!-- Role Selection -->
+                <div class="form-group">
+                    <label for="role">Role:</label>
+                    <select class="form-control" id="role" name="role" required>
+                        <option value="patient">Patient</option>
+                        <option value="doctor">Doctor</option>
+                    </select>
                 </div>
 
                 <?php if (isset($error)) { echo "<p class='text-danger'>$error</p>"; } ?>
