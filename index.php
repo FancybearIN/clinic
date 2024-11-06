@@ -134,7 +134,7 @@ try {
                         $randomSpecializationIndex = array_rand($specializations);
                         ?>
                         <div class="doctor-profile" data-index="<?php echo $i - 1; ?>">
-                            <img src="/image/doc<?php echo $i; ?>.jpg" alt="Doctor <?php echo $i; ?>" class="img-fluid rounded-circle" style="width: 200px; height: 200px; object-fit: cover;"> 
+                            <img src="/image/doc<?php echo $i; ?>.jpg" alt="Doctor <?php echo $i; ?>" class="img-fluid rounded-circle" style="width: 400px; height: 400px; object-fit: cover;"> 
                             <h3>Dr. Name <?php echo $i; ?></h3> 
                             <p><strong><?php echo $designations[$randomDesignationIndex]; ?></strong></p>
                             <p><?php echo $specializations[$randomSpecializationIndex]; ?></p> 
