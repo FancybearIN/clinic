@@ -1,4 +1,6 @@
 <?php
+// In your config file (e.g., db_config.php)
+define('BASE_URL', '/clinic/');
 
 # Database credentials
 $DB_HOST="localhost";
