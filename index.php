@@ -61,7 +61,12 @@ $content_file = isset($routes[$request_uri]) ? $routes[$request_uri] : '404.php'
                 <a href="/app/login.php">Login</a> 
             <?php } ?>
         </nav>
-        <a href="<?php echo $_SERVER['DOCUMENT_ROOT']; ?>/app/appointment.php" class="link-btn">Make Appointment</a>
+        <!-- #<a href=" -->
+        
+        <!-- <?php echo $_SERVER['DOCUMENT_ROOT']; ?>/app/appointment.php" class="link-btn">Make Appointment</a> -->
+        
+        <a href="app/appointment.php" class="link-btn">Make Appointment</a>
+
         <div id="menu-btn" class="fas fa-bars"></div>
     </header>
 
