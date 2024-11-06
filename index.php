@@ -1,11 +1,13 @@
 <?php
-include 'config/db_config.php'; // Include database configuration
+// Include database configuration
+include 'config/db_config.php'; 
 session_start();
 
+// --- ROUTING ---
 // Define routes and their corresponding content files
 $routes = [
     '/' => 'app/index.php', // Home page
-    '/dashboard' => 'app/dashboard.php', // Home page
+    '/dashboard' => 'app/dashboard.php', // Dashboard page
     '/about' => 'app/about.php', // About page
     '/services' => 'app/services.php', // Services page
     '/contact' => 'app/contact.php', // Contact page
@@ -25,6 +27,7 @@ $request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 // Determine which content to load based on the route
 $content_file = isset($routes[$request_uri]) ? $routes[$request_uri] : '404.php'; // Default to 404 if route not found
 
+// --- DATA FETCHING ---
 // Fetch doctor and patient counts
 try {
     $totalDoctors = $conn->query("SELECT COUNT(*) FROM doctors")->fetchColumn();
@@ -68,9 +71,21 @@ try {
         .doctor-profile.active {
             opacity: 1;
         }
+
+        /* Doctor Theme Colors */
+        .home {
+            background: linear-gradient(to bottom, #007bff, #90caf9); /* Blue gradient */
+            color: white;
+        }
+
+        .link-btn {
+            background-color: #2196F3; /* Blue button */
+            color: white;
+        }
     </style>
 </head>
 <body>
+    <!-- --- HEADER SECTION --- -->
     <header class="header">
         <a href="/" class="logo"> <i class="fas fa-heartbeat"></i> Dr Pawan arora Clinic </a>
 
@@ -95,7 +110,9 @@ try {
         <div id="menu-btn" class="fas fa-bars"></div>
     </header>
 
+    <!-- --- MAIN CONTENT SECTION --- -->
     <main>
+        <!-- --- HOME SECTION --- -->
         <section class="home" id="home">
             <div class="container">
                 <div class="row min-vh-100 align-items-center">
@@ -107,18 +124,20 @@ try {
 
                     <div class="col-md-6">
                         <div id="doctor-profile-container">
-                            <?php foreach ($doctorProfiles as $index => $doctor): ?>
-                                <div class="doctor-profile" data-index="<?php echo $index; ?>">
-                                    <img src="assets/doctor-icon.png" alt="Doctor Icon" class="img-fluid"> 
-                                    <h3>Dr. <?php echo $doctor['name']; ?></h3>
-                                    <p><?php echo $doctor['specialty']; ?></p>
+                            <?php for ($i = 1; $i <= 6; $i++): ?>
+                                <div class="doctor-profile" data-index="<?php echo $i - 1; ?>">
+                                    <img src="/image/doc<?php echo $i; ?>.jpg" alt="Doctor <?php echo $i; ?>" class="img-fluid"> 
+                                    <h3>Dr. Name <?php echo $i; ?></h3> 
+                                    <p>Specialty <?php echo $i; ?></p> 
                                 </div>
-                            <?php endforeach; ?>
+                            <?php endfor; ?>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
+        <!-- --- ABOUT SECTION --- -->
         <section class="about" id="about">
             <div class="container">
                 <div class="row align-items-center">
@@ -135,6 +154,8 @@ try {
                 </div>
             </div>
         </section>
+
+        <!-- --- STATS SECTION --- -->
         <section class="icons-container">
             <div class="container">
                 <div class="row">
@@ -164,6 +185,8 @@ try {
                 </div>
             </div>
         </section>
+
+        <!-- --- SERVICES SECTION --- -->
         <section class="services" id="services">
             <h1 class="heading"> our <span>services</span> </h1>
 
@@ -214,6 +237,8 @@ try {
             </div>
 
         </section>
+
+        <!-- --- FOOTER SECTION --- -->
         <section class="footer">
 
             <div class="box-container container">
@@ -258,19 +283,21 @@ try {
 
             </div>
 
-            <div class="credit"> created by <span>mr. web designer</span> | all rights reserved </div>
+            <div class="credit"> created by <span>GNDEC</span> | all rights reserved </div>
 
         </section>
-        <?php 
-        // Include the content file based on the route
-        if (file_exists($content_file)) {
-            include $content_file; 
-        } else {
-            include '404.php'; // Include a 404 page if the file doesn't exist
-        }
-        ?>
     </main>
 
+    <!-- --- 404 SECTION (Outside <main> to display even if content file is not found) --- -->
+    <!-- <?php 
+    if (file_exists($content_file)) {
+        include $content_file; 
+    } else {
+        include '404.php'; // Include a 404 page if the file doesn't exist
+    }
+    ?> -->
+
+    <!-- --- FOOTER SECTION --- -->
     <footer>
         </footer>
 
