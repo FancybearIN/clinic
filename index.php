@@ -35,7 +35,7 @@ $content_file = isset($routes[$request_uri]) ? $routes[$request_uri] : '404.php'
 <head>
     <title>HOSPITAL</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css"> 
+    <link rel="stylesheet" href="../css/style.css"> 
 </head>
 <body>
     <header class="header">
@@ -61,7 +61,7 @@ $content_file = isset($routes[$request_uri]) ? $routes[$request_uri] : '404.php'
                 <a href="/app/login.php">Login</a> 
             <?php } ?>
         </nav>
-        <a href="/app/appointment.php" class="link-btn">Make Appointment</a>
+        <a href="<?php echo $_SERVER['DOCUMENT_ROOT']; ?>/app/appointment.php" class="link-btn">Make Appointment</a>
         <div id="menu-btn" class="fas fa-bars"></div>
     </header>
 
