@@ -4,6 +4,7 @@ session_start();
 
 $name = $age = $email = $phone = $reason = $timeslot = "";
 $error = "";
+$success = ""; // Initialize $success
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST["name"];
@@ -11,13 +12,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
     $phone = $_POST["phone"];
     $reason = $_POST["reason"];
-    $timeslot = $_POST["timeslot"]; // This will hold "9:30 AM - 12:30 PM"
+    $timeslot = $_POST["timeslot"];
 
     // Split the selected time slot into start and end times
     list($startTime, $endTime) = explode(" - ", $timeslot);
 
     // Format the start and end times as valid DATETIME values
-    $startTime = date("Y-m-d H:i:s", strtotime($startTime)); 
+    $startTime = date("Y-m-d H:i:s", strtotime($startTime));
     $endTime = date("Y-m-d H:i:s", strtotime($endTime));
 
     // Basic input validation (you should add more robust validation)
@@ -25,44 +26,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "Please fill in all required fields.";
     } else {
         try {
-            // Prepare and execute the SQL query to insert data
-            // Notice we're using start_time and end_time now
-            $sql = "INSERT INTO appointments (name, age, email, phone, reason, start_time, end_time) 
-                    VALUES (:name, :age, :email, :phone, :reason, :start_time, :end_time)";
+            // Check if an appointment with the same email and phone already exists
+            $checkSql = "SELECT id FROM appointments WHERE email = :email AND phone = :phone AND (status = 'pending' OR status = 'confirmed')";
+            $checkStmt = $conn->prepare($checkSql);
+            $checkStmt->bindParam(':email', $email);
+            $checkStmt->bindParam(':phone', $phone);
+            $checkStmt->execute();
 
-            $stmt = $conn->prepare($sql);
-            $stmt->bindParam(':name', $name);
-            $stmt->bindParam(':age', $age);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':phone', $phone);
-            $stmt->bindParam(':reason', $reason);
-            // Bind the new start_time and end_time parameters
-            $stmt->bindParam(':start_time', $startTime);
-            $stmt->bindParam(':end_time', $endTime);
-
-            if ($stmt->execute()) {
-                $success = "Appointment booked successfully!";
-                // Reset form fields after successful submission
-                $name = $age = $email = $phone = $reason = $timeslot = "";
-
-                // *** Add the following line here ***
-                $_SESSION['last_appointment_id'] = $conn->lastInsertId();
-
-                // Redirect AFTER successful booking
-                header("Location: confirmation.php"); 
-                exit; // Important: Stop further script execution
+            if ($checkStmt->rowCount() > 0) {
+                $error = "An appointment with this email and phone number already exists.";
             } else {
-                $error = "Error booking appointment.";
+                // Prepare and execute the SQL query to insert data
+                $sql = "INSERT INTO appointments (name, age, email, phone, reason, start_time, end_time) 
+                        VALUES (:name, :age, :email, :phone, :reason, :start_time, :end_time)";
+
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':name', $name);
+                $stmt->bindParam(':age', $age);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':phone', $phone);
+                $stmt->bindParam(':reason', $reason);
+                $stmt->bindParam(':start_time', $startTime);
+                $stmt->bindParam(':end_time', $endTime);
+
+                if ($stmt->execute()) {
+                    $success = "Appointment booked successfully!";
+                    // Reset form fields after successful submission
+                    $name = $age = $email = $phone = $reason = $timeslot = "";
+
+                    // Store the last inserted appointment ID in the session
+                    $_SESSION['last_appointment_id'] = $conn->lastInsertId();
+
+                    // Redirect AFTER successful booking
+                    header("Location: confirmation.php");
+                    exit; // Important: Stop further script execution
+                } else {
+                    $error = "Error booking appointment.";
+                }
             }
-        } catch(PDOException $e) {
+        } catch (PDOException $e) {
             $error = "Error: " . $e->getMessage();
         }
     }
-} 
+}
 ?>
-
-<!-- ... (Rest of your HTML code) -->
-
 
 <!DOCTYPE html>
 <html>
