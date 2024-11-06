@@ -10,7 +10,7 @@ try {
     $conn = new PDO("mysql:host=$DB_HOST;dbname=$DB_NAME", $DB_USER, $DB_PASS);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     // echo "Connected successfully"; // You can uncomment this for testing
-} catch(PDOException $e) {
+} catch(PDOExcError: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'email' in 'field list'eption $e) {
     echo "Error: " . $e->getMessage();
 }
 ?>

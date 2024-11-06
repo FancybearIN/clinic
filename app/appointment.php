@@ -11,7 +11,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
     $phone = $_POST["phone"];
     $reason = $_POST["reason"];
-    $timeslot = $_POST["timeslot"];
+    $timeslot = $_POST["timeslot"]; // This will hold "9:30 AM - 12:30 PM"
+
+    // Split the selected time slot into start and end times
+    list($startTime, $endTime) = explode(" - ", $timeslot);
+
+    // Format the start and end times as valid DATETIME values
+    $startTime = date("Y-m-d H:i:s", strtotime($startTime)); 
+    $endTime = date("Y-m-d H:i:s", strtotime($endTime));
 
     // Basic input validation (you should add more robust validation)
     if (empty($name) || empty($email) || empty($phone)) {
@@ -19,15 +26,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         try {
             // Prepare and execute the SQL query to insert data
-            $sql = "INSERT INTO appointments (name, age, email, phone, reason, timeslot) VALUES (:name, :age, :email, :phone, :reason, :timeslot)";
+            // Notice we're using start_time and end_time now
+            $sql = "INSERT INTO appointments (name, age, email, phone, reason, start_time, end_time) 
+                    VALUES (:name, :age, :email, :phone, :reason, :start_time, :end_time)";
 
-            $stmt = $conn->prepare($sql); // $stmt is defined here
+            $stmt = $conn->prepare($sql);
             $stmt->bindParam(':name', $name);
             $stmt->bindParam(':age', $age);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':phone', $phone);
             $stmt->bindParam(':reason', $reason);
-            $stmt->bindParam(':timeslot', $timeslot);
+            // Bind the new start_time and end_time parameters
+            $stmt->bindParam(':start_time', $startTime);
+            $stmt->bindParam(':end_time', $endTime);
 
             if ($stmt->execute()) {
                 $success = "Appointment booked successfully!";
