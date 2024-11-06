@@ -6,24 +6,6 @@ $name = $age = $email = $phone = $reason = $timeslot = "";
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // ... (Your form processing code - same as before)
-
-            if ($stmt->execute()) {
-                $success = "Appointment booked successfully!";
-                // Reset form fields after successful submission
-                $name = $age = $email = $phone = $reason = $timeslot = "";
-
-                // *** Redirect AFTER successful booking ***
-                header("Location: confirmation.php"); 
-                exit; // Important: Stop further script execution
-            } else {
-                $error = "Error booking appointment.";
-            }
-
-    // ... (Rest of your form processing code - same as before)
-} 
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST["name"];
     $age = $_POST["age"];
     $email = $_POST["email"];
@@ -40,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $sql = "INSERT INTO appointments (name, age, email, phone, reason, timeslot) 
                  VALUES (:name, :age, :email, :phone, :reason, :timeslot)";
 
-            $stmt = $conn->prepare($sql);
+            $stmt = $conn->prepare($sql); // $stmt is defined here
             $stmt->bindParam(':name', $name);
             $stmt->bindParam(':age', $age);
             $stmt->bindParam(':email', $email);
@@ -52,6 +34,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $success = "Appointment booked successfully!";
                 // Reset form fields after successful submission
                 $name = $age = $email = $phone = $reason = $timeslot = "";
+
+                // Redirect AFTER successful booking
+                header("Location: confirmation.php"); 
+                exit; // Important: Stop further script execution
             } else {
                 $error = "Error booking appointment.";
             }
@@ -59,8 +45,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error = "Error: " . $e->getMessage();
         }
     }
-}
+} 
 ?>
+
+<!-- ... (Rest of your HTML code) -->
+
 
 <!DOCTYPE html>
 <html>
