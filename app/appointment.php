@@ -19,8 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         try {
             // Prepare and execute the SQL query to insert data
-            $sql = "INSERT INTO appointments (name, age, email, phone, reason, timeslot) 
-                 VALUES (:name, :age, :email, :phone, :reason, :timeslot)";
+            $sql = "INSERT INTO appointments (name, age, email, phone, reason, timeslot) VALUES (:name, :age, :email, :phone, :reason, :timeslot)";
 
             $stmt = $conn->prepare($sql); // $stmt is defined here
             $stmt->bindParam(':name', $name);
