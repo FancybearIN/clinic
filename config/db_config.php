@@ -1,9 +1,10 @@
 <?php
 
-$servername = "172.16.246.133";
-$username = "root";
-$password = "kali";
-$dbname = "clinic";
+# Database credentials
+DB_HOST="localhost"
+DB_USER="kali"
+DB_PASS="your_db_password" # Replace with your actual database password
+DB_NAME="clinic"
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
