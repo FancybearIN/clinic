@@ -114,28 +114,38 @@ try {
     <main>
         <!-- --- HOME SECTION --- -->
         <section class="home" id="home">
-            <div class="container">
-                <div class="row min-vh-100 align-items-center">
-                    <div class="col-md-6 content">
-                        <h3>We take care of your healthy life</h3>
-                        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laudantium itaque, ullam distinctio veritatis excepturi, aperiam, dolorum culpa consequuntur quos saepe iure. Excepturi, velit saepe.</p>
-                        <a href="app/appointment.php" class="link-btn">Make Appointment</a>
-                    </div>
+    <div class="container">
+        <div class="row min-vh-100 align-items-center">
+            <div class="col-md-6 content">
+                <h3>We take care of your healthy life</h3>
+                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laudantium itaque, ullam distinctio veritatis excepturi, aperiam, dolorum culpa consequuntur quos saepe iure. Excepturi, velit saepe.</p>
+                <a href="app/appointment.php" class="link-btn">Make Appointment</a>
+            </div>
 
-                    <div class="col-md-6">
-                        <div id="doctor-profile-container">
-                            <?php for ($i = 1; $i <= 6; $i++): ?>
-                                <div class="doctor-profile" data-index="<?php echo $i - 1; ?>">
-                                    <img src="/image/doc<?php echo $i; ?>.jpg" alt="Doctor <?php echo $i; ?>" class="img-fluid"> 
-                                    <h3>Dr. Name <?php echo $i; ?></h3> 
-                                    <p>Specialty <?php echo $i; ?></p> 
-                                </div>
-                            <?php endfor; ?>
+            <div class="col-md-6">
+                <div id="doctor-profile-container">
+                    <?php 
+                    $designations = ['Cardiologist', 'Neurologist', 'Pediatrician', 'Surgeon', 'Oncologist', 'Dermatologist']; // Add more designations as needed
+                    $specializations = ['Heart Diseases', 'Brain and Nerves', 'Child Health', 'Surgical Procedures', 'Cancer Treatment', 'Skin Diseases']; // Add more specializations
+
+                    for ($i = 1; $i <= 6; $i++): 
+                        // Randomly select designation and specialization
+                        $randomDesignationIndex = array_rand($designations);
+                        $randomSpecializationIndex = array_rand($specializations);
+                        ?>
+                        <div class="doctor-profile" data-index="<?php echo $i - 1; ?>">
+                            <img src="/image/doc<?php echo $i; ?>.jpg" alt="Doctor <?php echo $i; ?>" class="img-fluid rounded-circle" style="width: 200px; height: 200px; object-fit: cover;"> 
+                            <h3>Dr. Name <?php echo $i; ?></h3> 
+                            <p><strong><?php echo $designations[$randomDesignationIndex]; ?></strong></p>
+                            <p><?php echo $specializations[$randomSpecializationIndex]; ?></p> 
                         </div>
-                    </div>
+                    <?php endfor; ?>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
+</section>
+
 
         <!-- --- ABOUT SECTION --- -->
         <section class="about" id="about">
