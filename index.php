@@ -277,9 +277,9 @@ try {
                     <h3>contact info</h3>
                     <a href="#"> <i class="fas fa-phone"></i> +123-456-7890 </a>
                     <a href="#"> <i class="fas fa-phone"></i> +111-222-3333 </a>
-                    <a href="#"> <i class="fas fa-envelope"></i> shaikhanas@gmail.com </a>
-                    <a href="#"> <i class="fas fa-envelope"></i> anasbhai@gmail.com </a>
-                    <a href="#"> <i class="fas fa-map-marker-alt"></i> mumbai, india - 400104 </a>
+                    <a href="#"> <i class="fas fa-envelope"></i> students@gndec.ac.in </a>
+                    <a href="#"> <i class="fas fa-envelope"></i> students@gndec.ac.in </a>
+                    <a href="#"> <i class="fas fa-map-marker-alt"></i> ludhiana, india - 141418 </a>
                 </div>
 
                 <div class="box">
