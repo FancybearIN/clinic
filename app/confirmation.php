@@ -46,9 +46,9 @@
 
                         if ($appointment) {
                             $appointmentTime = date("l, F j, Y \a\\t g:i A", strtotime($appointment['start_time']));
-                            echo "<p class='text-center appointment-info'>Your appointment is scheduled for: <strong>$appointmentTime</strong></p>";
+                            echo "<p class='text-center appointment-info'>Your appointment ID is: <strong>$appointmentId</strong></p>"; 
                         } else {
-                            echo "<p class='text-center text-danger'>Error retrieving appointment details.</p>";
+                                echo "<p class='text-center text-danger'>Appointment ID not found.</p>";
                         }
                     } catch(PDOException $e) {
                         echo "<p class='text-center text-danger'>Error: " . $e->getMessage() . "</p>";

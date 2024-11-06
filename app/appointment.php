@@ -45,6 +45,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Reset form fields after successful submission
                 $name = $age = $email = $phone = $reason = $timeslot = "";
 
+                // *** Add the following line here ***
+                $_SESSION['last_appointment_id'] = $conn->lastInsertId();
+
                 // Redirect AFTER successful booking
                 header("Location: confirmation.php"); 
                 exit; // Important: Stop further script execution
