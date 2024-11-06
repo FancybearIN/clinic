@@ -77,6 +77,75 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Book Appointment</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <style>
+        body {
+            background-color: #e0f2f7; /* Light blue background */
+        }
+
+        .wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .fm-box {
+            width: 90%; /* Make the form take up most of the screen width on smaller devices */
+            max-width: 500px; /* Limit the maximum width on larger screens */
+            padding: 40px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+        }
+
+        h2 {
+            color: #2196F3; /* Blue heading color */
+        }
+
+        .btn-primary {
+            background-color: #2196F3; /* Blue button color */
+            border-color: #2196F3;
+        }
+
+        /* Add a background image with a doctor element */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('doctor-background.jpg'); /* Replace with your image */
+            background-size: cover;
+            background-position: center;
+            opacity: 0.2; /* Adjust opacity as needed */
+            z-index: -1; /* Place the background behind the content */
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="fm-box appointment">
+            <h2>Book Appointment</h2>
+
+            <?php if (!empty($error)) { echo "<p class='text-danger'>$error</p>"; } ?>
+            <?php if (isset($success)) { echo "<p class='text-success'>$success</p>"; } ?>
+
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                <!-- ... (Your existing form fields) ... -->
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+</body>
+</html><!DOCTYPE html>
+<html>
+<head>
+    <title>Book Appointment</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <style>
         /* Add custom styles here if needed */
         .wrap {
             display: flex;
