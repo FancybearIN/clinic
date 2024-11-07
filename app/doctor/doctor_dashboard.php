@@ -42,14 +42,16 @@ if ($_SESSION['role'] !== 'doctor') {
     exit;
 }
 
-// Fetch Doctor's Information
-$doctorId = $_SESSION["id"]; // Get the logged-in doctor's ID from the session
-$sql = "SELECT * FROM doctors WHERE id = :doctor_id"; // SQL query to fetch doctor's information
+// Fetch Appointments (All, Latest, Previous)
+$sql = "SELECT a.*, p.full_name AS patient_name, p.age AS patient_age, p.email AS patient_email, p.phone AS patient_phone 
+        FROM appointments a
+        JOIN users p ON a.patient_id = p.id 
+        WHERE a.doctor_id = :doctor_id 
+        ORDER BY a.timeslot DESC"; // Ensure 'full_name' exists in the 'users' table
 $stmt = $conn->prepare($sql);
 $stmt->bindParam(':doctor_id', $doctorId); // Bind the doctor ID parameter
 $stmt->execute(); // Execute the query
-$doctor = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the doctor's information
-
+$appointments = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch all appointments
 // Check if the doctor was found
 // if (!$doctor) {
 //     die("Doctor not found."); // Terminate script if no doctor is found
