@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 include '../../config/db_config.php';
 session_start();
 
@@ -58,7 +58,7 @@ $stmt->bindParam(':doctor_id', $doctorId);
 $stmt->execute();
 $appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-?>
+?> -->
 
 <!DOCTYPE html>
 <html>
