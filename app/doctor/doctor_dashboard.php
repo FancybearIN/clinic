@@ -36,23 +36,26 @@ if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
 }
 
 // Now that you know the user is logged in, check the role:
-if ($_SESSION['role'] !== 'doctor') {
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'doctor') {
     // Redirect to login if the user is not a doctor
     header("location: /app/login.php");
     exit;
 }
 
+// Assuming $doctorId is defined somewhere in your code
+$doctorId = $_SESSION['id']; // Example: assuming the doctor ID is stored in the session
+
 // Fetch Appointments (All, Latest, Previous)
-// Fetch Appointments (All, Latest, Previous)
-$sql = "SELECT a.*, p.full_name AS patient_name, p.age AS patient_age, p.email AS patient_email, p.phone AS patient_phone FROM appointments a JOIN users p ON a.patient_id = p.id WHERE a.doctor_id = :doctor_id ORDER BY a.timeslot DESC"; // Now using the new 'full_name' column // Ensure 'full_name' exists in the 'users' table
+$sql = "SELECT a.*, p.full_name AS patient_name, p.age AS patient_age, p.email AS patient_email, p.phone AS patient_phone 
+        FROM appointments a 
+        JOIN users p ON a.patient_id = p.id 
+        WHERE a.doctor_id = :doctor_id 
+        ORDER BY a.timeslot DESC";
+
 $stmt = $conn->prepare($sql);
 $stmt->bindParam(':doctor_id', $doctorId); // Bind the doctor ID parameter
 $stmt->execute(); // Execute the query
 $appointments = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch all appointments
-// Check if the doctor was found
-// if (!$doctor) {
-//     die("Doctor not found."); // Terminate script if no doctor is found
-// }
 
 // Handle Appointment Status Updates
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
@@ -74,18 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
     }
 }
 
-// Fetch Appointments (All, Latest, Previous)
-$sql = "SELECT a.*, p.name AS patient_name, p.age AS patient_age, p.email AS patient_email, p.phone AS patient_phone 
-        FROM appointments a
-        JOIN users p ON a.patient_id = p.id 
-        WHERE a.doctor_id = :doctor_id 
-        ORDER BY a.timeslot DESC"; // SQL query to fetch appointments for the doctor
-$stmt = $conn->prepare($sql);
-$stmt->bindParam(':doctor_id', $doctorId); // Bind the doctor ID parameter
-$stmt->execute(); // Execute the query
-$appointments = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch all appointments
-
-// You can now use $doctor and $appointments variables in your HTML to display the information
+// You can now use $appointments variable in your HTML to display the information
 
 ?>
 <!DOCTYPE html>
