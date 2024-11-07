@@ -1,6 +1,7 @@
 <?php
 include '../config/db_config.php';
 session_start();
+// gandhi edits
 
 // ... (Authentication check) ...
 

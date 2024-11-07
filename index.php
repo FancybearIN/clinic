@@ -14,11 +14,14 @@ $routes = [
     '/login' => 'app/login.php', // Login page
     '/registor' => 'app/registor.php', // Registration page
     '/doctor/profile' => 'app/doctor/doctor_profile.php', // Doctor profile page
+    '/doctor/doctor_dashboard.php' => 'app/doctor/doctor_dashboard.php', // Doctor dashboard page <--- Added route
     '/patient/profile' => 'app/patient/profile.php', // Patient profile page
     '/patient/records/(.*)' => 'app/patient/record.php', // Patient records page
     '/appointment/details/(.*)' => 'app/appointment_details.php', // Appointment details page
     '/add_prescription' => 'app/doctor/add_prescription.php', // Add prescription page
     '/export' => 'app/export.php', // Export page
+];
+
 ];
 
 // Get the current request URI and remove query string
