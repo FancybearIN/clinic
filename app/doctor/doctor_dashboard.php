@@ -1,49 +1,77 @@
 <?php
-include '../../config/db_config.php';
+// Start the session to access session variables
 session_start();
 
-// Clear browser cache
+// Include the database configuration file
+include '../../config/db_config.php';
+
+// Clear browser cache to prevent caching of sensitive data
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 
-// Authentication Check: Ensure only logged-in users can access
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
+// Set timeout duration (e.g., 30 minutes)
+$timeout_duration = 1800; // 30 minutes in seconds
+
+// Check if the user is logged in
+if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
+    // Check if the last activity time is set
+    if (isset($_SESSION['last_activity'])) {
+        // Calculate the session's lifetime
+        $session_life = time() - $_SESSION['last_activity'];
+        
+        // If the session has expired, log out the user
+        if ($session_life > $timeout_duration) {
+            session_unset(); // Unset session variables
+            session_destroy(); // Destroy the session
+            header("location: /app/login.php"); // Redirect to login
+            exit;
+        }
+    }
+    // Update last activity time
+    $_SESSION['last_activity'] = time();
+} else {
+    // Redirect to login if the user is not logged in
     header("location: /app/login.php");
     exit;
 }
 
 // Now that you know the user is logged in, check the role:
 if ($_SESSION['role'] !== 'doctor') {
+    // Redirect to login if the user is not a doctor
     header("location: /app/login.php");
     exit;
 }
 
 // Fetch Doctor's Information
-$doctorId = $_SESSION["id"];
-$sql = "SELECT * FROM doctors WHERE id = :doctor_id";
+$doctorId = $_SESSION["id"]; // Get the logged-in doctor's ID from the session
+$sql = "SELECT * FROM doctors WHERE id = :doctor_id"; // SQL query to fetch doctor's information
 $stmt = $conn->prepare($sql);
-$stmt->bindParam(':doctor_id', $doctorId);
-$stmt->execute();
-$doctor = $stmt->fetch(PDO::FETCH_ASSOC);
+$stmt->bindParam(':doctor_id', $doctorId); // Bind the doctor ID parameter
+$stmt->execute(); // Execute the query
+$doctor = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the doctor's information
 
+// Check if the doctor was found
 if (!$doctor) {
-    die("Doctor not found.");
+    die("Doctor not found."); // Terminate script if no doctor is found
 }
 
 // Handle Appointment Status Updates
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
+    // Get appointment ID and new status from the POST request
     $appointmentId = $_POST['appointment_id'];
     $newStatus = $_POST['status'];
 
+    // Prepare SQL statement to update appointment status
     $sql = "UPDATE appointments SET status = :status WHERE id = :appointment_id";
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':status', $newStatus);
-    $stmt->bindParam(':appointment_id', $appointmentId);
+    $stmt->bindParam(':status', $newStatus); // Bind the new status
+    $stmt->bindParam(':appointment_id', $appointmentId); // Bind the appointment ID
 
+    // Execute the update query and check for success
     if ($stmt->execute()) {
-        $successMessage = "Appointment status updated successfully!";
+        $successMessage = "Appointment status updated successfully!"; // Success message
     } else {
-        $errorMessage = "Error updating appointment status.";
+        $errorMessage = "Error updating appointment status."; // Error message
     }
 }
 
@@ -52,13 +80,15 @@ $sql = "SELECT a.*, p.name AS patient_name, p.age AS patient_age, p.email AS pat
         FROM appointments a
         JOIN users p ON a.patient_id = p.id 
         WHERE a.doctor_id = :doctor_id 
-        ORDER BY a.timeslot DESC";
+        ORDER BY a.timeslot DESC"; // SQL query to fetch appointments for the doctor
 $stmt = $conn->prepare($sql);
-$stmt->bindParam(':doctor_id', $doctorId);
-$stmt->execute();
-$appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt->bindParam(':doctor_id', $doctorId); // Bind the doctor ID parameter
+$stmt->execute(); // Execute the query
+$appointments = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch all appointments
 
- ?>
+// You can now use $doctor and $appointments variables in your HTML to display the information
+
+?>
 <!DOCTYPE html>
 <html>
 <head>
