@@ -1,5 +1,5 @@
 <?php
-include '../config/db_config.php';
+include '../../config/db_config.php';
 session_start();
 
 // Authentication Check: Ensure only logged-in doctors can access
