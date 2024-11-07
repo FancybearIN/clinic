@@ -1,6 +1,10 @@
 <?php
+
 include '../../config/db_config.php';
 session_start();
+// remove all browser cache
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
 // Authentication Check: Ensure only logged-in doctors can access
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true || $_SESSION['role'] !== 'doctor') {
@@ -9,12 +13,19 @@ if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true || $_SESSION
 }
 
 // Fetch Doctor's Information
-$doctorId = $_SESSION["id"];
+$doctorId = $_SESSION["id"]; 
+echo "Doctor ID from session: " . $doctorId . "<br>"; // Check the ID
+
 $sql = "SELECT * FROM doctors WHERE id = :doctor_id";
+echo "SQL Query: " . $sql . "<br>"; // Check the query
+
 $stmt = $conn->prepare($sql);
 $stmt->bindParam(':doctor_id', $doctorId);
 $stmt->execute();
 $doctor = $stmt->fetch(PDO::FETCH_ASSOC);
+
+print_r($doctor); // Check the fetched doctor data
+
 
 if (!$doctor) {
     die("Doctor not found."); 

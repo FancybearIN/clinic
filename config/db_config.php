@@ -1,4 +1,9 @@
 <?php
+
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 // In your config file (e.g., db_config.php)
 define('BASE_URL', '/clinic/');
 
