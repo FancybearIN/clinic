@@ -51,9 +51,9 @@ $stmt->execute(); // Execute the query
 $doctor = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the doctor's information
 
 // Check if the doctor was found
-if (!$doctor) {
-    die("Doctor not found."); // Terminate script if no doctor is found
-}
+// if (!$doctor) {
+//     die("Doctor not found."); // Terminate script if no doctor is found
+// }
 
 // Handle Appointment Status Updates
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
