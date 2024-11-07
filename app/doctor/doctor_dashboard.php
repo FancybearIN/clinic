@@ -43,11 +43,8 @@ if ($_SESSION['role'] !== 'doctor') {
 }
 
 // Fetch Appointments (All, Latest, Previous)
-$sql = "SELECT a.*, p.full_name AS patient_name, p.age AS patient_age, p.email AS patient_email, p.phone AS patient_phone 
-        FROM appointments a
-        JOIN users p ON a.patient_id = p.id 
-        WHERE a.doctor_id = :doctor_id 
-        ORDER BY a.timeslot DESC"; // Ensure 'full_name' exists in the 'users' table
+// Fetch Appointments (All, Latest, Previous)
+$sql = "SELECT a.*, p.full_name AS patient_name, p.age AS patient_age, p.email AS patient_email, p.phone AS patient_phone FROM appointments a JOIN users p ON a.patient_id = p.id WHERE a.doctor_id = :doctor_id ORDER BY a.timeslot DESC"; // Now using the new 'full_name' column // Ensure 'full_name' exists in the 'users' table
 $stmt = $conn->prepare($sql);
 $stmt->bindParam(':doctor_id', $doctorId); // Bind the doctor ID parameter
 $stmt->execute(); // Execute the query
