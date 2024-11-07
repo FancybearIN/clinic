@@ -6,12 +6,17 @@ session_start();
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Authentication Check: Ensure only logged-in doctors can access
-if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true || $_SESSION['role'] !== 'doctor') {
+if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
     header("location: /app/login.php"); 
     exit;
 }
 
+// Now that you know the user is logged in, check the role:
+if ($_SESSION['role'] !== 'doctor') {
+    // Redirect or handle unauthorized access (e.g., show an error message)
+    header("location: /app/login.php"); // Or a more appropriate page
+    exit;
+}
 // Fetch Doctor's Information
 $doctorId = $_SESSION["id"]; 
 echo "Doctor ID from session: " . $doctorId . "<br>"; // Check the ID
