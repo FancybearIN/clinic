@@ -1,45 +1,45 @@
 <?php
-include '../config/db_config.php'; // Include the database configuration file
-session_start(); // Start a new session or resume an existing one
+session_start();
+include '../../config/db_config.php'; // Ensure this path is correct
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") { // Check if the form was submitted using POST
-    $email = $_POST["email"]; // Get the email from the form
-    $password = $_POST["password"]; // Get the password from the form
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-    try {
-        // Prepare and execute a SQL query to fetch the user with the given email
-        $sql = "SELECT * FROM users WHERE email = :email";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':email', $email);
-        $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC); // Fetch the user data as an associative array
+$errorMessage = ""; // Initialize error message variable
 
-        // Check if a user with the given email exists and if the password matches
-        if ($user && password_verify($password, $user['password'])) { 
-            // If login is successful:
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
-            // Start Session Management
-            $_SESSION["loggedin"] = true; // Set the 'loggedin' session variable to true
-            $_SESSION["id"] = $user["id"]; // Store the user's ID in the session
-            $_SESSION["username"] = $user["username"]; // Store the user's username in the session
-            // End Session Management
+    // Prepare SQL statement to fetch user
+    $sql = "SELECT * FROM users WHERE email = :email";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':email', $email);
+    $stmt->execute();
 
-            // Start Role-Based Redirect
-            if ($user['role'] == 'doctor') { 
-                header("Location: /app/doctor/doctor_dashboard.php"); // Redirect to doctor dashboard
+    if ($stmt->rowCount() == 1) {
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        // Verify password
+        if (password_verify($password, $user['password'])) {
+            $_SESSION["loggedin"] = true;
+            $_SESSION["id"] = $user["id"];
+            $_SESSION["username"] = $user["username"];
+            $_SESSION["role"] = $user["role"];
+
+            // Redirect based on role
+            if ($user['role'] == 'doctor') {
+                header("location: /app/doctor/doctor_dashboard.php");
             } else {
-                header("Location: /app/patient/profile.php");  // Redirect to patient profile
+                header("location: /app/patient/profile.php");
             }
-            exit; // Stop further script execution after redirect
-            // End Role-Based Redirect
-
+            exit;
         } else {
-            // If login fails:
-            $error = "Invalid email or password."; // Set an error message
+            $errorMessage = "Invalid password.";
         }
-    } catch(PDOException $e) {
-        // If there's a database error:
-        $error = "Error: " . $e->getMessage(); // Set an error message with the exception details
+    } else {
+        $errorMessage = "No account found with that email.";
     }
 }
 ?>
