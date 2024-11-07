@@ -10,6 +10,11 @@
 
 }
 
+@media (max-width: 767px) { 
+    .sidebar {
+        display: none; /* Hide sidebar on small screens */
+    }
+}
 *{
     font-family: 'Poppins', sans-serif;
     margin: 0;
