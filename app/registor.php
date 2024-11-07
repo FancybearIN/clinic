@@ -32,13 +32,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION["username"] = $username;
                 $_SESSION["role"] = $role; // Store the role in the session
 
-                // Redirect based on user role
-                if ($role == 'doctor') { 
-                    header("Location: /doctor"); // Redirect to doctor dashboard
-                } else {
-                    header("Location: /home");  // Redirect to regular home page
-                }
-                exit;
+                   // Redirect based on user role
+                 if ($role == 'doctor') {
+                        header("Location: /doctor/doctor_dashboard.php"); // Redirect to doctor dashboard
+                    } else {
+                        header("Location: /patient/profile.php");  // Redirect to patient profile page
+                    }
+            exit;
             } else {
                 $error = "Error creating account.";
             }
