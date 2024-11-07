@@ -22,7 +22,6 @@ $routes = [
     '/export' => 'app/export.php', // Export page
 ];
 
-];
 
 // Get the current request URI and remove query string
 $request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
