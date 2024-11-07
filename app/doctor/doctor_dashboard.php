@@ -1,47 +1,40 @@
 <?php
-
 include '../../config/db_config.php';
 session_start();
-// remove all browser cache
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 
+// Clear browser cache
+header("Cache-Control: no-cache, must-revalidate");
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+
+// Authentication Check: Ensure only logged-in users can access
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: /app/login.php"); 
+    header("location: /app/login.php");
     exit;
 }
 
 // Now that you know the user is logged in, check the role:
 if ($_SESSION['role'] !== 'doctor') {
-    // Redirect or handle unauthorized access (e.g., show an error message)
-    header("location: /app/login.php"); // Or a more appropriate page
+    header("location: /app/login.php");
     exit;
 }
+
 // Fetch Doctor's Information
-$doctorId = $_SESSION["id"]; 
-echo "Doctor ID from session: " . $doctorId . "<br>"; // Check the ID
-
+$doctorId = $_SESSION["id"];
 $sql = "SELECT * FROM doctors WHERE id = :doctor_id";
-echo "SQL Query: " . $sql . "<br>"; // Check the query
-
 $stmt = $conn->prepare($sql);
 $stmt->bindParam(':doctor_id', $doctorId);
 $stmt->execute();
 $doctor = $stmt->fetch(PDO::FETCH_ASSOC);
 
-print_r($doctor); // Check the fetched doctor data
-
-
 if (!$doctor) {
-    die("Doctor not found."); 
+    die("Doctor not found.");
 }
 
-// Handle Appointment Status Updates 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) { 
+// Handle Appointment Status Updates
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
     $appointmentId = $_POST['appointment_id'];
     $newStatus = $_POST['status'];
 
-    // Update appointment status in the database
     $sql = "UPDATE appointments SET status = :status WHERE id = :appointment_id";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':status', $newStatus);
@@ -55,31 +48,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
 }
 
 // Fetch Appointments (All, Latest, Previous)
-// You'll need to adjust the query based on your filtering needs for Latest and Previous
 $sql = "SELECT a.*, p.name AS patient_name, p.age AS patient_age, p.email AS patient_email, p.phone AS patient_phone 
         FROM appointments a
         JOIN users p ON a.patient_id = p.id 
         WHERE a.doctor_id = :doctor_id 
-        ORDER BY a.timeslot DESC"; // Order by appointment time (latest first)
+        ORDER BY a.timeslot DESC";
 $stmt = $conn->prepare($sql);
 $stmt->bindParam(':doctor_id', $doctorId);
 $stmt->execute();
 $appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// ... (Add functions to handle adding bills, prescriptions, adding doctors, etc.) ...
 
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    <title>Doctor Dashboard</title>
+    <title>Doctor Dashboard & Profile</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-    <link rel="stylesheet" href="../css/style.css"> 
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>css/style.css"> 
     <style>
         /* Responsive Styles (using CSS Grid for layout) */
         .dashboard-container {
@@ -158,9 +145,22 @@ $appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <!-- Main Content Area -->
         <main class="main-content">
-            <div class="container-fluid"> 
-                <!-- Appointments Section -->
+            <div class="container-fluid">
+                <!-- Doctor Profile Section -->
                 <div class="row">
+                    <div class="col-12">
+                        <h2>Welcome, Dr. <?php echo $doctor['name']; ?>!</h2>
+
+                        <h3>Your Profile</h3>
+                        <p><strong>ID:</strong> <?php echo $doctor['id']; ?></p>
+                        <p><strong>Name:</strong> <?php echo $doctor['name']; ?></p>
+                        <p><strong>Position:</strong> <?php echo $doctor['position']; ?></p>
+                        <p><strong>Email:</strong> <?php echo $doctor['email']; ?></p>
+                    </div>
+                </div>
+
+                <!-- Appointments Section -->
+                <div class="row mt-4">
                     <div class="col-12">
                         <h2>Appointments</h2>
 
@@ -245,6 +245,13 @@ $appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <!-- Add New Doctor Form -->
                         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                             </form>
+                    </div>
+                </div>
+
+                <!-- Logout Button -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <a href="/app/logout.php" class="btn btn-danger">Logout</a>
                     </div>
                 </div>
             </div>
