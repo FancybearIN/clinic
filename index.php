@@ -1,49 +1,88 @@
 <?php
-// Include database configuration
-include 'config/db_config.php'; 
+// Start the session to access session variables
 session_start();
 
-// --- ROUTING ---
-// Define routes and their corresponding content files
-$routes = [
-    '/' => 'app/index.php', // Home page
-    '/dashboard' => 'app/dashboard.php', // Dashboard page
-    '/about' => 'app/about.php', // About page
-    '/services' => 'app/services.php', // Services page
-    '/contact' => 'app/contact.php', // Contact page
-    '/login' => 'app/login.php', // Login page
-    '/registor' => 'app/registor.php', // Registration page
-    '/doctor/profile' => 'app/doctor/doctor_profile.php', // Doctor profile page
-    '/doctor/doctor_dashboard.php' => 'app/doctor/doctor_dashboard.php', // Doctor dashboard page <--- Added route
-    '/patient/profile' => 'app/patient/profile.php', // Patient profile page
-    '/patient/records/(.*)' => 'app/patient/record.php', // Patient records page
-    '/appointment/details/(.*)' => 'app/appointment_details.php', // Appointment details page
-    '/add_prescription' => 'app/doctor/add_prescription.php', // Add prescription page
-    '/export' => 'app/export.php', // Export page
-];
+// Include the database configuration file
+include '../config/db_config.php';
 
+// Clear browser cache to prevent caching of sensitive data
+header("Cache-Control: no-cache, must-revalidate");
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 
-// Get the current request URI and remove query string
-$request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+// Set timeout duration (e.g., 30 minutes)
+$timeout_duration = 1800; // 30 minutes in seconds
 
-// Determine which content to load based on the route
-$content_file = isset($routes[$request_uri]) ? $routes[$request_uri] : '404.php'; // Default to 404 if route not found
-
-// --- DATA FETCHING ---
-// Fetch doctor and patient counts
-try {
-    $totalDoctors = $conn->query("SELECT COUNT(*) FROM doctors")->fetchColumn();
-    $totalPatients = $conn->query("SELECT COUNT(*) FROM users WHERE role = 'patient'")->fetchColumn();
-} catch (PDOException $e) {
-    $error = "Error fetching data: " . $e->getMessage();
+// Check if the user is logged in
+if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
+    // Check if the last activity time is set
+    if (isset($_SESSION['last_activity'])) {
+        // Calculate the session's lifetime
+        $session_life = time() - $_SESSION['last_activity'];
+        
+        // If the session has expired, log out the user
+        if ($session_life > $timeout_duration) {
+            session_unset(); // Unset session variables
+            session_destroy(); // Destroy the session
+            header("location: /app/login.php"); // Redirect to login
+            exit;
+        }
+    }
+    // Update last activity time
+    $_SESSION['last_activity'] = time();
+} else {
+    // Redirect to login if the user is not logged in
+    header("location: /app/login.php");
+    exit;
 }
 
-// Fetch doctor profiles for animation (assuming you have a 'doctors' table)
-try {
-    $doctorProfiles = $conn->query("SELECT * FROM doctors")->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    $error = "Error fetching doctor profiles: " . $e->getMessage();
+// Now that you know the user is logged in, check the role:
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'doctor') {
+    // Redirect to login if the user is not a doctor
+    header("location: /app/login.php");
+    exit;
 }
+
+// Get the doctor's ID from the session
+$doctorId = $_SESSION['id'];
+
+// --- Fetch Doctor's Profile ---
+$sql = "SELECT * FROM doctors WHERE id = :doctor_id";
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(':doctor_id', $doctorId);
+$stmt->execute();
+$doctor = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// --- Handle Prescription (Precaution) Submission ---
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_precaution'])) { 
+    $patientId = $_POST['patient_id'];
+    $medication = $_POST['medication'];
+    $dosage = $_POST['dosage'];
+
+    // ... (Input validation - add your validation logic here) ...
+
+    try {
+        $sql = "INSERT INTO prescriptions (patient_id, doctor_id, medication, dosage, date_prescribed) 
+                VALUES (:patient_id, :doctor_id, :medication, :dosage, NOW())";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':patient_id', $patientId);
+        $stmt->bindParam(':doctor_id', $doctorId);
+        $stmt->bindParam(':medication', $medication);
+        $stmt->bindParam(':dosage', $dosage);
+
+        if ($stmt->execute()) {
+            $successMessage = "Prescription added successfully!";
+        } else {
+            $errorMessage = "Error adding prescription.";
+        }
+    } catch(PDOException $e) {
+        $errorMessage = "Error: " . $e->getMessage();
+    }
+}
+
+// --- Fetch Appointments for the Doctor ---
+// (You can reuse the appointment fetching logic from doctor_dashboard.php)
+// ...
+
 ?>
 
 <!DOCTYPE html>
@@ -149,6 +188,39 @@ try {
                 </div>
             </div>
         </section>
+        <div class="container">
+        <h2>Welcome, Dr. <?php echo $doctor['name']; ?>!</h2>
+
+        <!-- Doctor Profile Section -->
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Your Profile</h3>
+                <p><strong>ID:</strong> <?php echo $doctor['id']; ?></p>
+                <p><strong>Name:</strong> <?php echo $doctor['name']; ?></p>
+                <p><strong>Position:</strong> <?php echo $doctor['position']; ?></p>
+                <p><strong>Email:</strong> <?php echo $doctor['email']; ?></p>
+            </div>
+        </div>
+
+        <!-- Add Prescription (Precaution) Section -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h3>Add Prescription</h3>
+                <?php if (isset($successMessage)) { echo "<p class='text-success'>$successMessage</p>"; } ?>
+                <?php if (isset($errorMessage)) { echo "<p class='text-danger'>$errorMessage</p>"; } ?>
+                <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                    <input type="hidden" name="patient_id" value="<?php echo $appointment['patient_id']; ?>"> <div class="form-group">
+                        <label for="medication">Medication:</label>
+                        <input type="text" class="form-control" id="medication" name="medication" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dosage">Dosage:</label>
+                        <input type="text" class="form-control" id="dosage" name="dosage" required>
+                    </div>
+                    <button type="submit" name="add_precaution" class="btn btn-primary">Add Prescription</button>
+                </form>
+            </div>
+        </div>
 
         <!-- --- ABOUT SECTION --- -->
           <!-- --- ABOUT SECTION --- -->
