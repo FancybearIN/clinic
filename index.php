@@ -76,12 +76,12 @@ try {
 
         /* Doctor Theme Colors */
         .home {
-            background: linear-gradient(to bottom, #4CAF50, #C8E6C9); /* Green gradient */
+            background: linear-gradient(to bottom, #007bff, #90caf9); /* Blue gradient */
             color: white;
         }
 
         .link-btn {
-            background-color: #43A047; /* Darker green button */
+            background-color: #2196F3; /* Blue button */
             color: white;
         }
     </style>
