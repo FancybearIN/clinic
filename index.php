@@ -115,17 +115,8 @@ try {
         <nav class="navbar">
             <a href="#home">Home</a>
             <a href="#about">About</a>
-            <a href="#services">Services</a>
-            <a href="#contact">Contact</a> 
-
-            <!--  <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == true) { ?> -->
-                <!-- <?php if ($_SESSION['role'] == 'doctor'): ?> -->
-                    <!-- <a href="/doctor/profile">My Profile</a>  -->
-                <!-- <?php endif; ?> -->
-                <!-- <a href="/app/logout.php">Logout</a>  -->
-            <!-- <?php } else { ?> -->
-                <!-- <a href="/app/login.php">Login</a>  -->
-            <!-- <?php } ?> --> 
+            <a href="#footer">Services</a>
+            <a href="/app/appointment.php">Contact</a> 
             <?php if (!isset($_SESSION['loggedin'])): ?> 
                 <a href="/app/registor.php">Register</a> 
             <?php endif; ?>
@@ -182,7 +173,7 @@ try {
         <section class="booking" id="booking">
             <div class="container">
                 <img src="image/book.svg" alt="Book Appointment" class="img-fluid" style="max-width: 700px;">
-                <h2>Need an Appointment?</h2>class="img-fluid" style="max-width: 700px;
+                <h2>Need an Appointment?</h2>
                 <p>Book your appointment online with ease.</p>
                 <a href="app/appointment.php" class="link-btn">Book Now</a>
             </div>
