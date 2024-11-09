@@ -3,7 +3,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-include '../clinic/config/db_config.php'; 
+include 'clinic/config/db_config.php'; 
 
 session_start(); // Start the session
 
