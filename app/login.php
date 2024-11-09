@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($user['role'] == 'doctor') {
                 header("location: /app/doctor/doctor_dashboard.php");
             } else {
-                header("location: /patient/profile.php");
+                header("location: /app/patient/profile.php");
 
             }
             exit;

@@ -8,11 +8,7 @@ session_start();
 $appointmentId = $_GET['id']; // Get appointment ID from URL
 
 // Fetch appointment details
-$sql = "SELECT a.*, p.name AS patient_name, d.name AS doctor_name 
-        FROM appointments a
-        JOIN users p ON a.patient_id = p.id
-        JOIN doctors d ON a.doctor_id = d.id
-        WHERE a.id = :appointment_id";
+$sql = "SELECT a.*, p.name AS patient_name, d.name AS doctor_name FROM appointments a JOIN users p ON a.patient_id = p.id JOIN doctors d ON a.doctor_id = d.id WHERE a.id = :appointment_id";
 $stmt = $conn->prepare($sql);
 $stmt->bindParam(':appointment_id', $appointmentId);
 $stmt->execute();

@@ -3,7 +3,7 @@
 session_start();
 
 // Include the database configuration file
-include '../../config/db_config.php';
+include '../config/db_config.php';
 
 // Clear browser cache to prevent caching of sensitive data
 header("Cache-Control: no-cache, must-revalidate");
