@@ -77,8 +77,11 @@ try {
             opacity: 1;
         }
          /* About Us Text Size */
-         .about .content { /* Target the content within the about section */
-            font-size: 1.2em; /* Adjust the font size as needed */
+         .about .content span { /* Target the <span> within the content div */
+                font-size: 2em; /* Adjust the font size as needed */
+                font-weight: bold; /* Optionally make it bold */
+               display: block; /* Make it a block element to control spacing */
+                margin-bottom: 10px; /* Add some space below */
         }
 
         /* Booking Section Styles */
