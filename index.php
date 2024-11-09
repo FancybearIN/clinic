@@ -144,7 +144,7 @@ try {
 
                     <div class="col-md-6">
                         <div id="doctor-profile-container">
-                            <img src="image/book.svg" alt="Book Appointment" class="img-fluid" style="max-width: 400px;"> 
+                            <img src="image/home.svg" alt="Book Appointment" class="img-fluid" style="max-width: 700px;"> 
                         </div>
                     </div>
                 </div>
@@ -173,8 +173,8 @@ try {
         <!-- --- BOOKING SECTION --- -->
         <section class="booking" id="booking">
             <div class="container">
-                <img src="image/home.svg" alt="Book Appointment">
-                <h2>Need an Appointment?</h2>
+                <img src="image/book.svg" alt="Book Appointment" class="img-fluid" style="max-width: 700px;">
+                <h2>Need an Appointment?</h2>class="img-fluid" style="max-width: 700px;
                 <p>Book your appointment online with ease.</p>
                 <a href="app/appointment.php" class="link-btn">Book Now</a>
             </div>
