@@ -1,3 +1,30 @@
+<?php
+    include '../config/db_config.php';
+    session_start();
+     // Assuming you have the appointment ID in a session variable
+        if (isset($_SESSION['last_appointment_id'])) {
+                    $appointmentId = $_SESSION['last_appointment_id'];
+
+                    try {
+                        $sql = "SELECT start_time FROM appointments WHERE id = :id";
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bindParam(':id', $appointmentId);
+                        $stmt->execute();
+                        $appointment = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                        if ($appointment) {
+                            $appointmentTime = date("l, F j, Y \a\\t g:i A", strtotime($appointment['start_time']));
+                            echo "<p class='text-center appointment-info'>Your appointment ID is: <strong>$appointmentId</strong></p>"; 
+                        } else {
+                                echo "<p class='text-center text-danger'>Appointment ID not found.</p>";
+                        }
+                    } catch(PDOException $e) {
+                        echo "<p class='text-center text-danger'>Error: " . $e->getMessage() . "</p>";
+                    }
+                } else {
+                    echo "<p class='text-center text-danger'>Appointment ID not found.</p>";
+                }
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -28,36 +55,6 @@
         <div class="row">
             <div class="col-md-8 offset-md-2 confirmation-container"> 
                 <h1 class="text-center">Appointment Confirmed!</h1>
-
-                <?php
-                include '../config/db_config.php';
-                session_start();
-
-                // Assuming you have the appointment ID in a session variable
-                if (isset($_SESSION['last_appointment_id'])) {
-                    $appointmentId = $_SESSION['last_appointment_id'];
-
-                    try {
-                        $sql = "SELECT start_time FROM appointments WHERE id = :id";
-                        $stmt = $conn->prepare($sql);
-                        $stmt->bindParam(':id', $appointmentId);
-                        $stmt->execute();
-                        $appointment = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                        if ($appointment) {
-                            $appointmentTime = date("l, F j, Y \a\\t g:i A", strtotime($appointment['start_time']));
-                            echo "<p class='text-center appointment-info'>Your appointment ID is: <strong>$appointmentId</strong></p>"; 
-                        } else {
-                                echo "<p class='text-center text-danger'>Appointment ID not found.</p>";
-                        }
-                    } catch(PDOException $e) {
-                        echo "<p class='text-center text-danger'>Error: " . $e->getMessage() . "</p>";
-                    }
-                } else {
-                    echo "<p class='text-center text-danger'>Appointment ID not found.</p>";
-                }
-                ?>
-
                 <p class="text-center">Thank you for booking an appointment. We will contact you shortly to confirm.</p>
 
                 <div class="text-center mt-4"> 
