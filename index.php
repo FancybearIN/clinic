@@ -5,6 +5,9 @@ session_start();
 // Include the database configuration file
 include '../config/db_config.php';
 
+// Now you can use $conn
+$stmt = $conn->prepare($sql); // This should work now
+
 // Clear browser cache to prevent caching of sensitive data
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
