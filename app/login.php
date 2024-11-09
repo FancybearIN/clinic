@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Redirect based on role
             if ($user['role'] == 'doctor') {
-                header("location: /app/doctor/doctor_dashboard.php");
+                header("location: /app/doctor_dashboard.php");
             } else {
                 header("location: /app/patient/profile.php");
 
