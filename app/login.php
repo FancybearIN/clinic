@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../../config/db_config.php'; // Ensure this path is correct
+include $_SERVER['DOCUMENT_ROOT'] . '/clinic/config/db_config.php'; 
 
 // Enable error reporting
 error_reporting(E_ALL);
