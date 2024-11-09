@@ -1,6 +1,7 @@
 <?php
 
-include '../config/db_config.php'; // Include the database connection file
+include $_SERVER['DOCUMENT_ROOT'] . '/clinic/config/db_config.php'; 
+
 session_start(); // Start the session
 
 // Check if the user is logged in
