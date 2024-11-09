@@ -51,16 +51,22 @@ $doctorId = $_SESSION['id']; // Example: assuming the doctor ID is stored in the
 // --- Fetch Appointments (All, Latest, Previous) ---
 
 // Fetch all appointments for the logged-in doctor
-$sql = "SELECT a.*, p.username AS patient_name, p.age AS patient_age, p.email AS patient_email, p.phone AS patient_phone 
-        FROM appointments a 
-        JOIN users p ON a.patient_id = p.id 
-        WHERE a.doctor_id = :doctor_id 
-        ORDER BY a.timeslot DESC";
+$sql = "SELECT id, username 
+        FROM users 
+        WHERE role = 'doctor' 
+        AND id NOT IN (
+            SELECT doctor_id 
+            FROM appointments 
+            WHERE start_time = :start_time 
+            AND end_time = :end_time
+            AND status IN ('pending', 'confirmed') 
+        )"; // Check for overlapping appointments
 
 $stmt = $conn->prepare($sql);
-$stmt->bindParam(':doctor_id', $doctorId);
+$stmt->bindParam(':start_time', $startTime);
+$stmt->bindParam(':end_time', $endTime);
 $stmt->execute();
-$appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$availableDoctors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Handle Appointment Status Updates
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
