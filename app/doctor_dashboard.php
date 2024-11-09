@@ -51,11 +51,7 @@ $doctorId = $_SESSION['id']; // Example: assuming the doctor ID is stored in the
 $maxPatientsPerDoctor = 3;
 
 // --- Fetch Appointments (All, Latest, Previous) ---
-$sql = "SELECT a.*, p.username AS patient_name, p.age AS patient_age, p.email AS patient_email, p.phone AS patient_phone 
-        FROM appointments a 
-        JOIN users p ON a.patient_id = p.id 
-        WHERE a.doctor_id = :doctor_id 
-        ORDER BY a.timeslot DESC"; 
+$sql = "SELECT a.*, p.username AS patient_name, p.age AS patient_age, p.email AS patient_email, p.phone AS patient_phone FROM appointments a JOIN users p ON a.patient_id = p.id WHERE a.doctor_id = :doctor_id ORDER BY a.timeslot DESC";
 
 $stmt = $conn->prepare($sql);
 $stmt->bindParam(':doctor_id', $doctorId); // Bind the doctor ID parameter
