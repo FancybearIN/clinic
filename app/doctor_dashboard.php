@@ -42,31 +42,22 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'doctor') {
     exit;
 }
 
-// Assuming $doctorId is defined somewhere in your code
-$doctorId = $_SESSION['id']; // Example: assuming the doctor ID is stored in the session
+// Get the logged-in doctor's ID from the session
+$doctorId = $_SESSION['id']; 
 
-// --- Doctor Assignment Logic (Removed - assigning based on time slot) ---
-// Removed the logic for 6 doctors and max patients per doctor
+// --- Fetch Appointments for the Logged-in Doctor ---
 
-// --- Fetch Appointments (All, Latest, Previous) ---
-
-// Fetch all appointments for the logged-in doctor
-$sql = "SELECT id, username 
-        FROM users 
-        WHERE role = 'doctor' 
-        AND id NOT IN (
-            SELECT doctor_id 
-            FROM appointments 
-            WHERE start_time = :start_time 
-            AND end_time = :end_time
-            AND status IN ('pending', 'confirmed') 
-        )"; // Check for overlapping appointments
+$sql = "SELECT a.*, p.username AS patient_name, p.age AS patient_age, 
+               p.email AS patient_email, p.phone AS patient_phone
+        FROM appointments a
+        JOIN users p ON a.patient_id = p.id
+        WHERE a.doctor_id = :doctor_id 
+        ORDER BY a.timeslot DESC"; // Assuming you want to order by timeslot
 
 $stmt = $conn->prepare($sql);
-$stmt->bindParam(':start_time', $startTime);
-$stmt->bindParam(':end_time', $endTime);
+$stmt->bindParam(':doctor_id', $doctorId);
 $stmt->execute();
-$availableDoctors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$appointments = $stmt->fetchAll(PDO::FETCH_ASSOC); 
 
 // Handle Appointment Status Updates
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
@@ -132,32 +123,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($appointments as $appointment): ?>
+                                        <?php 
+                                        // Check if $appointments is an array and not empty
+                                        if (is_array($appointments) && !empty($appointments)) { 
+                                            foreach ($appointments as $appointment): ?>
+                                                <tr>
+                                                    <td><?php echo $appointment['id']; ?></td>
+                                                    <td><?php echo $appointment['patient_name']; ?></td>
+                                                    <td><?php echo $appointment['patient_age']; ?></td> 
+                                                    <td><?php echo $appointment['patient_email']; ?></td> 
+                                                    <td><?php echo $appointment['patient_phone']; ?></td> 
+                                                    <td><?php echo $appointment['reason']; ?></td>
+                                                    <td><?php echo $appointment['timeslot']; ?></td>
+                                                    <td><?php echo $appointment['status']; ?></td>
+                                                    <td>
+                                                        <!-- Appointment Status Update Form -->
+                                                        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                                                            <input type="hidden" name="appointment_id" value="<?php echo $appointment['id']; ?>">
+                                                            <select name="status" class="form-control">
+                                                                <option value="pending" <?php if ($appointment['status'] == 'pending') echo 'selected'; ?>>Pending</option>
+                                                                <option value="confirmed" <?php if ($appointment['status'] == 'confirmed') echo 'selected'; ?>>Confirmed</option>
+                                                                <option value="postponed" <?php if ($appointment['status'] == 'postponed') echo 'selected'; ?>>Postponed</option>
+                                                                <option value="done" <?php if ($appointment['status'] == 'done') echo 'selected'; ?>>Done</option>
+                                                                <option value="ignored" <?php if ($appointment['status'] == 'ignored') echo 'selected'; ?>>Ignored</option>
+                                                            </select>
+                                                            <button type="submit" name="update_status" class="btn btn-sm btn-primary mt-2">Update</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; 
+                                        } else { ?>
                                             <tr>
-                                                <td><?php echo $appointment['id']; ?></td>
-                                                <td><?php echo $appointment['patient_name']; ?></td>
-                                                <td><?php echo $appointment['patient_age']; ?></td> 
-                                                <td><?php echo $appointment['patient_email']; ?></td> 
-                                                <td><?php echo $appointment['patient_phone']; ?></td> 
-                                                <td><?php echo $appointment['reason']; ?></td>
-                                                <td><?php echo $appointment['timeslot']; ?></td>
-                                                <td><?php echo $appointment['status']; ?></td>
-                                                <td>
-                                                    <!-- Appointment Status Update Form -->
-                                                    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-                                                        <input type="hidden" name="appointment_id" value="<?php echo $appointment['id']; ?>">
-                                                        <select name="status" class="form-control">
-                                                            <option value="pending" <?php if ($appointment['status'] == 'pending') echo 'selected'; ?>>Pending</option>
-                                                            <option value="confirmed" <?php if ($appointment['status'] == 'confirmed') echo 'selected'; ?>>Confirmed</option>
-                                                            <option value="postponed" <?php if ($appointment['status'] == 'postponed') echo 'selected'; ?>>Postponed</option>
-                                                            <option value="done" <?php if ($appointment['status'] == 'done') echo 'selected'; ?>>Done</option>
-                                                            <option value="ignored" <?php if ($appointment['status'] == 'ignored') echo 'selected'; ?>>Ignored</option>
-                                                        </select>
-                                                        <button type="submit" name="update_status" class="btn btn-sm btn-primary mt-2">Update</button>
-                                                    </form>
-                                                </td>
+                                                <td colspan="9">No appointments found.</td> 
                                             </tr>
-                                        <?php endforeach; ?>
+                                        <?php } ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -179,3 +178,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
+
