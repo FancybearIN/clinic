@@ -1,5 +1,6 @@
 <?php
-include '../config/db_config.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/clinic/config/db_config.php'; 
+
 session_start();
 
 // Check if the user is logged in (you might want to restrict dashboard access)
