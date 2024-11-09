@@ -1,91 +1,49 @@
 <?php
-// Start the session to access session variables
+// Include database configuration
+include 'config/db_config.php'; 
 session_start();
 
-// Include the database configuration file
-include '../config/db_config.php';
+// --- ROUTING ---
+// Define routes and their corresponding content files
+$routes = [
+    '/' => 'app/index.php', // Home page
+    // '/dashb' => 'app/dashboard.php', // Dashboard page
+    '/about' => 'app/about.php', // About page
+    '/services' => 'app/services.php', // Services page
+    '/contact' => 'app/contact.php', // Contact page
+    '/login' => 'app/login.php', // Login page
+    '/registor' => 'app/registor.php', // Registration page
+    // '/doctor/profile' => 'app/doctor/doctor_profile.php', // Doctor profile page
+    '/doctor/doctor_dashboard.php' => 'app/doctor/doctor_dashboard.php', // Doctor dashboard page <--- Added route
+    '/patient/profile' => 'app/patient/profile.php', // Patient profile page
+    // '/patient/records/(.*)' => 'app/patient/record.php', // Patient records page
+    '/appointment/details/(.*)' => 'app/appointment_details.php', // Appointment details page
+    // '/add_prescription' => 'app/doctor/add_prescription.php', // Add prescription page
+    '/export' => 'app/export.php', // Export page
+];
 
-// Now you can use $conn
-$stmt = $conn->prepare($sql); // This should work now
 
-// Clear browser cache to prevent caching of sensitive data
-header("Cache-Control: no-cache, must-revalidate");
-header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+// Get the current request URI and remove query string
+$request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// Set timeout duration (e.g., 30 minutes)
-$timeout_duration = 1800; // 30 minutes in seconds
+// Determine which content to load based on the route
+$content_file = isset($routes[$request_uri]) ? $routes[$request_uri] : '404.php'; // Default to 404 if route not found
 
-// Check if the user is logged in
-if (isset($_SESSION["loggedin"]) && $_SESSION["loggedin"] === true) {
-    // Check if the last activity time is set
-    if (isset($_SESSION['last_activity'])) {
-        // Calculate the session's lifetime
-        $session_life = time() - $_SESSION['last_activity'];
-        
-        // If the session has expired, log out the user
-        if ($session_life > $timeout_duration) {
-            session_unset(); // Unset session variables
-            session_destroy(); // Destroy the session
-            header("location: /app/login.php"); // Redirect to login
-            exit;
-        }
-    }
-    // Update last activity time
-    $_SESSION['last_activity'] = time();
-} else {
-    // Redirect to login if the user is not logged in
-    header("location: /app/login.php");
-    exit;
+// --- DATA FETCHING ---
+// Fetch doctor and patient counts
+try {
+    $totalDoctors = $conn->query("SELECT COUNT(*) FROM doctors")->fetchColumn();
+    $totalPatients = $conn->query("SELECT COUNT(*) FROM users WHERE role = 'patient'")->fetchColumn();
+} catch (PDOException $e) {
+    $error = "Error fetching data: " . $e->getMessage();
 }
 
-// Now that you know the user is logged in, check the role:
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'doctor') {
-    // Redirect to login if the user is not a doctor
-    header("location: /app/login.php");
-    exit;
+// Fetch doctor profiles for animation (assuming you have a 'doctors' table)
+try {
+    $doctorProfiles = $conn->query("SELECT * FROM doctors")->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $error = "Error fetching doctor profiles: " . $e->getMessage();
 }
-
-// Get the doctor's ID from the session
-$doctorId = $_SESSION['id'];
-
-// --- Fetch Doctor's Profile ---
-$sql = "SELECT * FROM doctors WHERE id = :doctor_id";
-$stmt = $conn->prepare($sql);
-$stmt->bindParam(':doctor_id', $doctorId);
-$stmt->execute();
-$doctor = $stmt->fetch(PDO::FETCH_ASSOC);
-
-// --- Handle Prescription (Precaution) Submission ---
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_precaution'])) { 
-    $patientId = $_POST['patient_id'];
-    $medication = $_POST['medication'];
-    $dosage = $_POST['dosage'];
-
-    // ... (Input validation - add your validation logic here) ...
-
-    try {
-        $sql = "INSERT INTO prescriptions (patient_id, doctor_id, medication, dosage, date_prescribed) 
-                VALUES (:patient_id, :doctor_id, :medication, :dosage, NOW())";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':patient_id', $patientId);
-        $stmt->bindParam(':doctor_id', $doctorId);
-        $stmt->bindParam(':medication', $medication);
-        $stmt->bindParam(':dosage', $dosage);
-
-        if ($stmt->execute()) {
-            $successMessage = "Prescription added successfully!";
-        } else {
-            $errorMessage = "Error adding prescription.";
-        }
-    } catch(PDOException $e) {
-        $errorMessage = "Error: " . $e->getMessage();
-    }
-}
-
-// --- Fetch Appointments for the Doctor ---
-// (You can reuse the appointment fetching logic from doctor_dashboard.php)
-// ...
-
 ?>
 
 <!DOCTYPE html>
@@ -191,7 +149,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_precaution'])) {
                 </div>
             </div>
         </section>
-        <div class="container">
+        div class="container">
         <h2>Welcome, Dr. <?php echo $doctor['name']; ?>!</h2>
 
         <!-- Doctor Profile Section -->
