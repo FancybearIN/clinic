@@ -54,6 +54,7 @@ $sql = "SELECT a.*, p.name AS patient_name, p.age AS patient_age, p.email AS pat
 
 
 
+
 $stmt = $conn->prepare($sql);
 $stmt->bindParam(':doctor_id', $doctorId); // Bind the doctor ID parameter
 $stmt->execute(); // Execute the query
