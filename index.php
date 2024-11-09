@@ -76,6 +76,21 @@ try {
         .doctor-profile.active {
             opacity: 1;
         }
+         /* About Us Text Size */
+         .about .content { /* Target the content within the about section */
+            font-size: 1.2em; /* Adjust the font size as needed */
+        }
+
+        /* Booking Section Styles */
+        .booking {
+            padding: 50px 0; /* Add padding to the section */
+            text-align: center; /* Center align content */
+        }
+
+        .booking img {
+            max-width: 300px; /* Adjust image size as needed */
+            margin-bottom: 20px;
+        }
           /*
         Doctor Theme Colors
         .home {
@@ -137,7 +152,8 @@ try {
         </section>
 
         <!-- --- ABOUT SECTION --- -->
-        <section class="about" id="about">
+          <!-- --- ABOUT SECTION --- -->
+          <section class="about" id="about">
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-md-6 image">
@@ -151,6 +167,16 @@ try {
                         <a href="/about" class="link-btn">learn more</a> 
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- --- BOOKING SECTION --- -->
+        <section class="booking" id="booking">
+            <div class="container">
+                <img src="image/home.svg" alt="Book Appointment">
+                <h2>Need an Appointment?</h2>
+                <p>Book your appointment online with ease.</p>
+                <a href="app/appointment.php" class="link-btn">Book Now</a>
             </div>
         </section>
 
