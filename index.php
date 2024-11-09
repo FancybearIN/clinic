@@ -54,6 +54,9 @@ try {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css"> 
     <style>
+        body {
+                background-color: white; /* Set background color to white */
+        }
         /* Doctor Profile Animation */
         #doctor-profile-container {
             position: relative;
@@ -73,17 +76,17 @@ try {
         .doctor-profile.active {
             opacity: 1;
         }
-
-        /* Doctor Theme Colors */
+          /*
+        Doctor Theme Colors
         .home {
             background: linear-gradient(to bottom, #007bff, #90caf9); /* Blue gradient */
             color: white;
-        }
-
+         */
+         /*  
         .link-btn {
             background-color: #2196F3; /* Blue button */
             color: white;
-        }
+        */
     </style>
 </head>
 <body>
