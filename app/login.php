@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '/config/db_config.php'; 
+include '../config/db_config.php'; 
 
 // Enable error reporting
 error_reporting(E_ALL);
