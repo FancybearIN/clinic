@@ -113,19 +113,23 @@ try {
         <a href="/" class="logo"> <i class="fas fa-heartbeat"></i> Dr Pawan arora Clinic </a>
 
         <nav class="navbar">
-            <a href="/dashboard">Dashboard</a>
-            <a href="/about">About</a>
-            <a href="/services">Services</a>
-            <a href="/contact">Contact</a> 
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+            <a href="#contact">Contact</a> 
 
-            <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == true) { ?>
-                <?php if ($_SESSION['role'] == 'doctor'): ?>
-                    <a href="/doctor/profile">My Profile</a> 
-                <?php endif; ?>
-                <a href="/app/logout.php">Logout</a> 
-            <?php } else { ?>
-                <a href="/app/login.php">Login</a> 
-            <?php } ?>
+            <!--  <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == true) { ?> -->
+                <!-- <?php if ($_SESSION['role'] == 'doctor'): ?> -->
+                    <!-- <a href="/doctor/profile">My Profile</a>  -->
+                <!-- <?php endif; ?> -->
+                <!-- <a href="/app/logout.php">Logout</a>  -->
+            <!-- <?php } else { ?> -->
+                <!-- <a href="/app/login.php">Login</a>  -->
+            <!-- <?php } ?> --> 
+            <?php if (!isset($_SESSION['loggedin'])): ?> 
+                <a href="/app/registor.php">Register</a> 
+            <?php endif; ?>
+
         </nav>
 
         <a href="app/appointment.php" class="link-btn">Make Appointment</a>
