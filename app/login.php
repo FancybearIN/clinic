@@ -1,6 +1,6 @@
 <?php
 session_start();
-include $_SERVER['DOCUMENT_ROOT'] . '/config/db_config.php'; 
+include '/config/db_config.php'; 
 
 // Enable error reporting
 error_reporting(E_ALL);
@@ -32,7 +32,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($user['role'] == 'doctor') {
                 header("location: /app/doctor/doctor_dashboard.php");
             } else {
-                header("location: /app/patient/profile.php");
+                header("location: /patient/profile.php");
+
             }
             exit;
         } else {
