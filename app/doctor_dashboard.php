@@ -84,14 +84,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>css/style.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
     <style>
         /* ... Your existing styles ... */
     </style>
 </head>
 <body>
 
-    <!-- ... Your existing HTML (header, sidebar) ... -->
+<header class="header">
+        <a href="/" class="logo"> <i class="fas fa-heartbeat"></i> Dr Pawan arora Clinic </a>
 
+        <nav class="navbar">
+            <a href="/app/doctor_dashboard.php">Dashboard</a>
+            <a href="#prescriptions"><i class="fas fa-file-prescription"></i> Prescriptions</a>
+
+            <a href="/"><i class="fas fa-user-md"></i> Doctor</a>
+           
+            <<?php if: ?>
+                <!-- Profile Dropdown -->
+                <div class="profile-dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user-circle fa-lg"></i> 
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="profileDropdown">
+                        <span class="dropdown-item">Welcome, <?php echo $_SESSION['username']; ?>!</span>
+                        <span class="dropdown-item">ID: <?php echo $_SESSION['id']; ?></span>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Edit Profile</a>
+                        <a class="dropdown-item" href="logout.php">Logout</a>
+                    </div>
+                </div>
+            <?php endif; ?
+        </nav>
+
+        // <a href="app/appointment.php" class="link-btn">Make Appointment</a>
+
+        <div id="menu-btn" class="fas fa-bars"></div>
+    </header>
         <!-- Main Content Area -->
         <main class="main-content">
             <div class="container-fluid">
