@@ -1,6 +1,6 @@
 <?php
 session_start();
-include $_SERVER['DOCUMENT_ROOT'] . '/clinic/config/db_config.php'; 
+include $_SERVER['DOCUMENT_ROOT'] . '/config/db_config.php'; 
 
 // Enable error reporting
 error_reporting(E_ALL);

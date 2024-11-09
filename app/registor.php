@@ -1,50 +1,50 @@
 <?php
+// Include the database configuration file
 include '../config/db_config.php';
+
+// Start the session
 session_start();
 
+// Check if the request method is POST (form submission)
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get the form data and sanitize it
     $username = $_POST["username"];
     $email = $_POST["email"];
-    $password = password_hash($_POST["password"], PASSWORD_DEFAULT); // Hash the password
-    $role = $_POST["role"]; // Get the selected role from the form
+    $password = password_hash($_POST["password"], PASSWORD_DEFAULT); // Hash the password for security
+    $role = $_POST["role"]; // Get the selected role (patient or doctor)
 
     try {
-        // Check if email already exists
+        // Check if the email already exists in the database
         $sql = "SELECT * FROM users WHERE email = :email";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':email', $email);
         $stmt->execute();
 
+        // If an account with the same email is found
         if ($stmt->rowCount() > 0) {
-            $error = "Email already exists.";
+            $error = "Email already exists."; 
         } else {
-            // Insert new user into database
-            $sql = "INSERT INTO users (username, email, password, role) VALUES (:username, :email, :password, :role)"; // Include role in the query
+            // Prepare the SQL query to insert the new user into the database
+            $sql = "INSERT INTO users (username, email, password, role) VALUES (:username, :email, :password, :role)";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':username', $username);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $password);
-            $stmt->bindParam(':role', $role); // Bind the role parameter
-            // $stmt->bindParam(':full_name', $username); // Use username for full_name
+            $stmt->bindParam(':role', $role); 
 
+            // If the insertion was successful
             if ($stmt->execute()) {
-                $_SESSION["loggedin"] = true;
-                $_SESSION["id"] = $conn->lastInsertId();
-                $_SESSION["username"] = $username;
-                $_SESSION["role"] = $role; // Store the role in the session
-
-                   // Redirect based on user role
-                 if ($role == 'doctor') {
-                        header("Location: /doctor/doctor_dashboard.php"); // Redirect to doctor dashboard
-                    } else {
-                        header("Location: /patient/profile.php");  // Redirect to patient profile page
-                    }
-            exit;
+                // Instead of logging in automatically, redirect to login page with a success message
+                $_SESSION['registration_success'] = "Account created successfully! You can now log in.";
+                header("Location: login.php"); // Redirect to login page
+                exit; // Terminate the script after redirection
             } else {
+                // If there was an error during insertion
                 $error = "Error creating account.";
             }
         }
     } catch(PDOException $e) {
+        // Catch any potential database errors
         $error = "Error: " . $e->getMessage();
     }
 }
