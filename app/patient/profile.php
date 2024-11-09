@@ -39,6 +39,8 @@ $stmt = $conn->prepare($sql);
 $stmt->bindParam(':patient_id', $patientId);
 $stmt->execute();
 $prescriptions = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch all prescriptions
+var_dump($patient); 
+
 ?>
 
 <!DOCTYPE html>
