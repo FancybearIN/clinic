@@ -45,40 +45,39 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'doctor') {
 // Assuming $doctorId is defined somewhere in your code
 $doctorId = $_SESSION['id']; // Example: assuming the doctor ID is stored in the session
 
-// --- Doctor Assignment Logic (Add this before fetching appointments) ---
-
-// Define the maximum number of patients per doctor per time slot
-$maxPatientsPerDoctor = 3;
+// --- Doctor Assignment Logic (Removed - assigning based on time slot) ---
+// Removed the logic for 6 doctors and max patients per doctor
 
 // --- Fetch Appointments (All, Latest, Previous) ---
-$sql = "SELECT a.*, p.username AS patient_name, p.age AS patient_age, p.email AS patient_email, p.phone AS patient_phone FROM appointments a JOIN users p ON a.patient_id = p.id WHERE a.doctor_id = :doctor_id ORDER BY a.timeslot DESC";
+
+// Fetch all appointments for the logged-in doctor
+$sql = "SELECT a.*, p.username AS patient_name, p.age AS patient_age, p.email AS patient_email, p.phone AS patient_phone 
+        FROM appointments a 
+        JOIN users p ON a.patient_id = p.id 
+        WHERE a.doctor_id = :doctor_id 
+        ORDER BY a.timeslot DESC";
 
 $stmt = $conn->prepare($sql);
-$stmt->bindParam(':doctor_id', $doctorId); // Bind the doctor ID parameter
-$stmt->execute(); // Execute the query
-$appointments = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch all appointments
+$stmt->bindParam(':doctor_id', $doctorId);
+$stmt->execute();
+$appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Handle Appointment Status Updates
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
-    // Get appointment ID and new status from the POST request
     $appointmentId = $_POST['appointment_id'];
     $newStatus = $_POST['status'];
 
-    // Prepare SQL statement to update appointment status
     $sql = "UPDATE appointments SET status = :status WHERE id = :appointment_id";
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':status', $newStatus); // Bind the new status
-    $stmt->bindParam(':appointment_id', $appointmentId); // Bind the appointment ID
+    $stmt->bindParam(':status', $newStatus);
+    $stmt->bindParam(':appointment_id', $appointmentId);
 
-    // Execute the update query and check for success
     if ($stmt->execute()) {
-        $successMessage = "Appointment status updated successfully!"; // Success message
+        $successMessage = "Appointment status updated successfully!";
     } else {
-        $errorMessage = "Error updating appointment status."; // Error message
+        $errorMessage = "Error updating appointment status.";
     }
 }
-
-// You can now use $appointments variable in your HTML to display the information
 
 ?>
 <!DOCTYPE html>
@@ -89,114 +88,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>css/style.css"> 
     <style>
-        /* Responsive Styles (using CSS Grid for layout) */
-        .dashboard-container {
-            display: grid;
-            grid-template-columns: 1fr; /* Single column on smaller screens */
-            gap: 20px;
-            padding: 20px;
-        }
-
-        @media (min-width: 768px) { 
-            .dashboard-container {
-                grid-template-columns: 250px 1fr; /* Sidebar and main content */
-            }
-        }
-
-        .sidebar {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 5px;
-        }
-
-        .main-content {
-            /* Style the main content area */
-        }
-
-        /* ... other styles ... */
+        /* ... Your existing styles ... */
     </style>
 </head>
 <body>
 
-    <!-- Header Section -->
-    <header class="header"> 
-        <a href="/" class="logo"> <i class="fas fa-heartbeat"></i> Dr Pawan arora Clinic </a>
-        <nav class="navbar">
-            <ul>
-                <li><a href="#home">home</a></li>
-                <li><a href="#about">about</a></li>
-                <li><a href="#services">services</a></li>
-                <li><a href="#doctors">doctors</a></li>
-                <li><a href="#book">book</a></li>
-                <li><a href="#review">review</a></li>
-                <li><a href="#blogs">blogs</a></li>
-            </ul>
-        </nav>
-
-        <div id="menu-btn" class="fas fa-bars"></div>
-    </header>
-
-    <!-- Dashboard Container -->
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link active" href="/doctor/doctor_dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fas fa-file-invoice"></i> Bills</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#"><i class="fas fa-prescription"></i> Prescriptions</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/doctor/doctor_profile.php"><i class="fas fa-user"></i> Profile</a>
-                </li>
-                <li class="nav-item dropdown"> 
-                    <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-user-circle"></i> <?php echo $doctor['name']; ?> 
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="profileDropdown">
-                        <a class="dropdown-item" href="/app/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                    </div>
-                </li>
-            </ul>
-        </aside>
+    <!-- ... Your existing HTML (header, sidebar) ... -->
 
         <!-- Main Content Area -->
         <main class="main-content">
             <div class="container-fluid">
-                <!-- Doctor Profile Section -->
-                <div class="row">
-                    <div class="col-12">
-                        <h2>Welcome, Dr. <?php echo $doctor['name']; ?>!</h2>
-
-                        <h3>Your Profile</h3>
-                        <p><strong>ID:</strong> <?php echo $doctor['id']; ?></p>
-                        <p><strong>Name:</strong> <?php echo $doctor['name']; ?></p>
-                        <p><strong>Position:</strong> <?php echo $doctor['position']; ?></p>
-                        <p><strong>Email:</strong> <?php echo $doctor['email']; ?></p>
-                    </div>
-                </div>
+                <!-- ... Your existing Doctor Profile Section ... -->
 
                 <!-- Appointments Section -->
                 <div class="row mt-4">
                     <div class="col-12">
                         <h2>Appointments</h2>
 
-                        <!-- Appointment Tabs -->
-                        <ul class="nav nav-tabs" id="appointmentTabs" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="allAppointments-tab" data-toggle="tab" href="#allAppointments" role="tab" aria-controls="allAppointments" aria-selected="true">All</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="latestAppointments-tab" data-toggle="tab" href="#latestAppointments" role="tab" aria-controls="latestAppointments" aria-selected="false">Latest</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="previousAppointments-tab" data-toggle="tab" href="#previousAppointments" role="tab" aria-controls="previousAppointments" aria-selected="false">Previous</a>
-                            </li>
-                        </ul>
+                        <!-- ... Your existing Appointment Tabs ... -->
 
                         <!-- Appointment Tab Content -->
                         <div class="tab-content" id="appointmentTabContent">
@@ -233,6 +142,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
                                                         <input type="hidden" name="appointment_id" value="<?php echo $appointment['id']; ?>">
                                                         <select name="status" class="form-control">
                                                             <option value="pending" <?php if ($appointment['status'] == 'pending') echo 'selected'; ?>>Pending</option>
+                                                            <option value="confirmed" <?php if ($appointment['status'] == 'confirmed') echo 'selected'; ?>>Confirmed</option>
                                                             <option value="postponed" <?php if ($appointment['status'] == 'postponed') echo 'selected'; ?>>Postponed</option>
                                                             <option value="done" <?php if ($appointment['status'] == 'done') echo 'selected'; ?>>Done</option>
                                                             <option value="ignored" <?php if ($appointment['status'] == 'ignored') echo 'selected'; ?>>Ignored</option>
@@ -246,35 +156,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
                                 </table>
                             </div>
 
-                            <!-- Latest Appointments Tab -->
-                            <div class="tab-pane fade" id="latestAppointments" role="tabpanel" aria-labelledby="latestAppointments-tab">
-                                <p>Content for latest appointments will be displayed here.</p>
-                            </div>
+                            <!-- ... Your existing Latest and Previous Appointments Tabs ... -->
 
-                            <!-- Previous Appointments Tab -->
-                            <div class="tab-pane fade" id="previousAppointments" role="tabpanel" aria-labelledby="previousAppointments-tab">
-                                <p>Content for previous appointments will be displayed here.</p>
-                            </div>
                         </div> 
                     </div>
                 </div> 
 
-                <!-- Add New Doctor Section (You can move this to a separate file/modal) -->
-                <div class="row mt-4"> 
-                    <div class="col-12">
-                        <h3>Add New Doctor</h3>
-                        <!-- Add New Doctor Form -->
-                        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-                            </form>
-                    </div>
-                </div>
+                <!-- ... Your existing Add New Doctor Section and Logout Button ... -->
 
-                <!-- Logout Button -->
-                <div class="row mt-4">
-                    <div class="col-12">
-                        <a href="/app/logout.php" class="btn btn-danger">Logout</a>
-                    </div>
-                </div>
             </div>
         </main>
     </div>
