@@ -147,7 +147,8 @@ try {
 
                     <div class="col-md-6">
                         <div id="doctor-profile-container">
-                            <img src="image/home.svg" alt="Book Appointment" class="img-fluid" style="max-width: 700px;"> 
+                            <img src="image/home.svg" alt="Book Appointment" class="img-fluid" > 
+                            <!-- style="max-width: 700px;">  -->
                         </div>
                     </div>
                 </div>
