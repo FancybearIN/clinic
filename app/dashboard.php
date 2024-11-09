@@ -4,7 +4,7 @@ session_start();
 
 // Check if the user is logged in (you might want to restrict dashboard access)
 if (!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true) {
-    header("location: /login"); // Redirect to the login route
+    header("location:/login"); // Redirect to the login route
     exit;
 }
 

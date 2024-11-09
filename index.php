@@ -76,12 +76,12 @@ try {
 
         /* Doctor Theme Colors */
         .home {
-            background: linear-gradient(to bottom, #007bff, #90caf9); /* Blue gradient */
+            background: linear-gradient(to bottom, #4CAF50, #C8E6C9); /* Green gradient */
             color: white;
         }
 
         .link-btn {
-            background-color: #2196F3; /* Blue button */
+            background-color: #43A047; /* Darker green button */
             color: white;
         }
     </style>
@@ -114,54 +114,38 @@ try {
 
     <!-- --- MAIN CONTENT SECTION --- -->
     <main>
-        <!-- --- HOME SECTION --- -->
-        <section class="home" id="home">
-    <div class="container">
-        <div class="row min-vh-100 align-items-center">
-            <div class="col-md-6 content">
-                <h3>We take care of your healthy life</h3>
-                <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laudantium itaque, ullam distinctio veritatis excepturi, aperiam, dolorum culpa consequuntur quos saepe iure. Excepturi, velit saepe.</p>
-                <a href="app/appointment.php" class="link-btn">Make Appointment</a>
-            </div>
+     <!-- --- HOME SECTION --- -->
+     <section class="home" id="home">
+            <div class="container">
+                <div class="row min-vh-100 align-items-center">
+                    <div class="col-md-6 content">
+                        <h3>We take care of your healthy life</h3>
+                        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laudantium itaque, ullam distinctio veritatis excepturi, aperiam, dolorum culpa consequuntur quos saepe iure. Excepturi, velit saepe.</p>
+                        <a href="app/appointment.php" class="link-btn">Make Appointment</a>
+                    </div>
 
-            <div class="col-md-6">
-                <div id="doctor-profile-container">
-                    <?php 
-                    $designations = ['Cardiologist', 'Neurologist', 'Pediatrician', 'Surgeon', 'Oncologist', 'Dermatologist']; // Add more designations as needed
-                    $specializations = ['Heart Diseases', 'Brain and Nerves', 'Child Health', 'Surgical Procedures', 'Cancer Treatment', 'Skin Diseases']; // Add more specializations
-
-                    for ($i = 1; $i <= 6; $i++): 
-                        // Randomly select designation and specialization
-                        $randomDesignationIndex = array_rand($designations);
-                        $randomSpecializationIndex = array_rand($specializations);
-                        ?>
-                        <div class="doctor-profile" data-index="<?php echo $i - 1; ?>">
-                            <img src="/image/doc<?php echo $i; ?>.jpg" alt="Doctor <?php echo $i; ?>" class="img-fluid rounded-circle" style="width: 400px; height: 400px; object-fit: cover;"> 
-                            <h3>Dr. Name <?php echo $i; ?></h3> 
-                            <p><strong><?php echo $designations[$randomDesignationIndex]; ?></strong></p>
-                            <p><?php echo $specializations[$randomSpecializationIndex]; ?></p> 
+                    <div class="col-md-6">
+                        <div id="doctor-profile-container">
+                            <img src="image/book.svg" alt="Book Appointment" class="img-fluid" style="max-width: 400px;"> 
                         </div>
-                    <?php endfor; ?>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
-
+        </section>
 
         <!-- --- ABOUT SECTION --- -->
         <section class="about" id="about">
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-md-6 image">
-                        <img src="assets/about-img.svg" class="w-100 mb-5 mb-md-0" alt="">
+                        <img src="image/about.svg" class="w-100 mb-5 mb-md-0" alt="About Us"> 
                     </div>
 
                     <div class="col-md-6 content">
                         <span>about us</span>
                         <h3>Caring for you is our priority</h3>
                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae reiciendis accusamus fugit necessitatibus nemo illum, repudiandae quos, magni iusto ullam. Minima assumenda saepe culpa praesentium. Esse adipisci animi voluptates!</p>
-                        <a href="/about" class="link-btn">learn more</a>
+                        <a href="/about" class="link-btn">learn more</a> 
                     </div>
                 </div>
             </div>
@@ -199,7 +183,7 @@ try {
         </section>
 
         <!-- --- SERVICES SECTION --- -->
-        <section class="services" id="services">
+       <!-- <section class="services" id="services">
             <h1 class="heading"> our <span>services</span> </h1>
 
             <div class="box-container container">
@@ -248,7 +232,7 @@ try {
 
             </div>
 
-        </section>
+        </section> -->
 
         <!-- --- FOOTER SECTION --- -->
         <section class="footer">
