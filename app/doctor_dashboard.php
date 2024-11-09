@@ -115,7 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
                         <a class="dropdown-item" href="logout.php">Logout</a>
                     </div>
                 </div>
-            <?php endif; ?
+            <?php endif; ?>
         </nav>
 
         // <a href="app/appointment.php" class="link-btn">Make Appointment</a>
