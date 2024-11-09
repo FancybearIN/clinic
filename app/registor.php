@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $password);
             $stmt->bindParam(':role', $role); // Bind the role parameter
-            $stmt->bindParam(':full_name', $username); // Use username for full_name
+            // $stmt->bindParam(':full_name', $username); // Use username for full_name
 
             if ($stmt->execute()) {
                 $_SESSION["loggedin"] = true;
