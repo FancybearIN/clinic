@@ -123,7 +123,7 @@ try {
 
         </nav>
 
-        <a href="app/registor.php" class="link-btn">Registor</a>
+        <a href="app/registor.php" class="link-btn">Registor/Login</a>
 
         <div id="menu-btn" class="fas fa-bars"></div>
     </header>
