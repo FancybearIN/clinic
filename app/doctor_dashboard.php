@@ -6,8 +6,8 @@ session_start();
 include '../config/db_config.php';
 
 // Enable error reporting (for development purposes, disable in production)
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 // Clear browser cache to prevent caching of sensitive data
 header("Cache-Control: no-cache, must-revalidate");
