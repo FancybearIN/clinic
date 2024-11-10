@@ -154,24 +154,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_prescription'])) {
         <!-- Collapsible wrapper -->
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Navbar brand -->
-            <a class="navbar-brand mt-2 mt-lg-0" href="#">
-                <img
-                        src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp"
-                        height="15"
-                        alt="MDB Logo"
-                        loading="lazy"
-                />
+            <a href="/" class="logo navbar-brand mt-2 mt-lg-0"> 
+                <i class="fas fa-heartbeat"></i> 
             </a>
+
             <!-- Left links -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Dashboard</a>
+                    <a class="nav-link" href="#dashboardContent" data-toggle="tab"
+                       data-target="#dashboardContent">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Team</a>
+                    <a class="nav-link" href="#appointmentsContent" data-toggle="tab"
+                       data-target="#appointmentsContent">Appointments</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Projects</a>
+                    <a class="nav-link" href="#prescriptionsContent" data-toggle="tab"
+                       data-target="#prescriptionsContent">Prescriptions</a>
                 </li>
             </ul>
             <!-- Left links -->
@@ -184,10 +183,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_prescription'])) {
             <span class="navbar-text me-3">
                 Welcome, Doctor!
             </span>
-            <a class="text-reset me-3" href="#">
-                <i class="fas fa-user"></i>
-            </a>
-
             <!-- Avatar -->
             <div class="dropdown">
                 <a
@@ -214,7 +209,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_prescription'])) {
                         <a class="dropdown-item" href="#">Settings</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="#">Logout</a>
+                        <a class="dropdown-item" href="logout.php">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -224,6 +219,146 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_prescription'])) {
     <!-- Container wrapper -->
 </nav>
 <!-- Navbar -->
+
+<!-- Main Content Area -->
+<main class="main-content">
+    <div class="container-fluid">
+        <div class="tab-content" id="myTabContent">
+            <!-- Dashboard Content -->
+            <div class="tab-pane fade show active" id="dashboardContent" role="tabpanel"
+                 aria-labelledby="dashboard-tab">
+                <!-- ... Your existing Dashboard Content ... -->
+                <h2>Welcome to your Dashboard, Dr. <?php echo $_SESSION['username']; ?>!</h2>
+            </div>
+
+            <!-- Appointments Content -->
+            <div class="tab-pane fade" id="appointmentsContent" role="tabpanel" aria-labelledby="appointments-tab">
+                <!-- ... Your existing Appointments Content ... -->
+                <h2>Manage Your Appointments</h2>
+                <!-- ... Your existing Appointment Tabs ... -->
+
+                <!-- Appointment Tab Content -->
+                <div class="tab-content" id="appointmentTabContent">
+                    <!-- All Appointments Tab -->
+                    <div class="tab-pane fade show active" id="allAppointments" role="tabpanel"
+                         aria-labelledby="allAppointments-tab">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Patient Name</th>
+                                <th>Age</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Reason</th>
+                                <th>Time Slot</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            // Check if $appointments is an array and not empty
+                            if (is_array($appointments) && !empty($appointments)) {
+                                foreach ($appointments as $appointment): ?>
+                                    <tr>
+                                        <td><?php echo $appointment['id']; ?></td>
+                                        <td><?php echo $appointment['patient_name']; ?></td>
+                                        <td><?php echo $appointment['patient_age']; ?></td>
+                                        <td><?php echo $appointment['patient_email']; ?></td>
+                                        <td><?php echo $appointment['patient_phone']; ?></td>
+                                        <td><?php echo $appointment['reason']; ?></td>
+                                        <td><?php echo $appointment['timeslot']; ?></td>
+                                        <td><?php echo $appointment['status']; ?></td>
+                                        <td>
+                                            <!-- Appointment Status Update Form -->
+                                            <form method="post"
+                                                  action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                                                <input type="hidden" name="appointment_id"
+                                                       value="<?php echo $appointment['id']; ?>">
+                                                <select name="status" class="form-control">
+                                                    <option value="pending" <?php if ($appointment['status'] == 'pending') echo 'selected'; ?>>
+                                                        Pending
+                                                    </option>
+                                                    <option value="confirmed" <?php if ($appointment['status'] == 'confirmed') echo 'selected'; ?>>
+                                                        Confirmed
+                                                    </option>
+                                                    <option value="postponed" <?php if ($appointment['status'] == 'postponed') echo 'selected'; ?>>
+                                                        Postponed
+                                                    </option>
+                                                    <option value="done" <?php if ($appointment['status'] == 'done') echo 'selected'; ?>>
+                                                        Done
+                                                    </option>
+                                                    <option value="ignored" <?php if ($appointment['status'] == 'ignored') echo 'selected'; ?>>
+                                                        Ignored
+                                                    </option>
+                                                </select>
+                                                <button type="submit" name="update_status"
+                                                        class="btn btn-sm btn-primary mt-2">Update
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <?php endforeach;
+                            } else { ?>
+                                <tr>
+                                    <td colspan="9">No appointments found.</td>
+                                </tr>
+                            <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- ... Your existing Latest and Previous Appointments Tabs ... -->
+
+                </div>
+            </div>
+
+            <!-- Prescriptions Content -->
+            <div class="tab-pane fade" id="prescriptionsContent" role="tabpanel"
+                 aria-labelledby="prescriptions-tab">
+                <h2>Manage Prescriptions</h2>
+
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <h3>Add New Prescription</h3>
+                        <?php if (isset($prescriptionSuccess)) {
+                            echo "<p class='text-success'>$prescriptionSuccess</p>";
+                        } ?>
+                        <?php if (isset($prescriptionError)) {
+                            echo "<p class='text-danger'>$prescriptionError</p>";
+                        } ?>
+                        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                            <div class="form-group">
+                                <label for="patient_id">Select Patient:</label>
+                                <select class="form-control" id="patient_id" name="patient_id" required>
+                                    <option value="">Select Patient</option>
+                                    <?php
+                                    // Fetch patients and populate the dropdown
+                                    $patientsSql = "SELECT id, username FROM users WHERE role = 'patient'";
+                                    $patientsStmt = $conn->query($patientsSql);
+                                    while ($row = $patientsStmt->fetch(PDO::FETCH_ASSOC)) {
+                                        echo "<option value='" . $row['id'] . "'>" . $row['username'] . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="prescription_text">Prescription:</label>
+                                <textarea class="form-control" id="prescription_text" name="prescription_text" rows="5"
+                                          required></textarea>
+                            </div>
+                            <button type="submit" name="add_prescription" class="btn btn-primary">Add
+                                Prescription
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
@@ -232,6 +367,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_prescription'])) {
         crossorigin="anonymous"></script>
 </body>
 </html>
-
-
-
