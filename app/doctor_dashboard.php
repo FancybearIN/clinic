@@ -1,7 +1,9 @@
 <?php
 // Start the session to access session variables
 session_start();
-
+// Enable error reporting (for development purposes, disable in production)
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 // Include the database configuration file
 include '../config/db_config.php';
 
@@ -174,9 +176,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_prescription'])) {
     }
 }
 
-// Enable error reporting (for development purposes, disable in production)
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+
 
 
 ?>
