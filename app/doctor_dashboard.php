@@ -408,3 +408,133 @@ $totalCasesResolved = $stmt->fetchColumn();
                                                 </select>
                                                 <button type="submit" name="update_status"
                                                         class="btn btn-sm btn-primary
+                                                        mt-2">Update
+                                                </button>
+                                            </form>
+
+                                            <!-- Appointment Delete Form -->
+                                            <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" onsubmit="return confirm('Are you sure you want to delete this appointment?');">
+                                                <input type="hidden" name="appointment_id" value="<?php echo $appointment['id']; ?>">
+                                                <button type="submit" name="delete_appointment" class="btn btn-sm btn-danger mt-2">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <?php endforeach;
+                            } else { ?>
+                                <tr>
+                                    <td colspan="9">No appointments found.</td>
+                                </tr>
+                            <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- ... Your existing Latest and Previous Appointments Tabs ... -->
+
+                </div>
+            </div>
+
+            <!-- Prescriptions Content -->
+            <div class="tab-pane fade" id="prescriptionsContent" role="tabpanel"
+                 aria-labelledby="prescriptions-tab">
+                <h2>Manage Prescriptions</h2>
+
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <h3>Add New Prescription</h3>
+                        <?php if (isset($prescriptionSuccess)) {
+                            echo "<p class='text-success'>$prescriptionSuccess</p>";
+                        } ?>
+                        <?php if (isset($prescriptionError)) {
+                            echo "<p class='text-danger'>$prescriptionError</p>";
+                        } ?>
+                        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                            <div class="form-group">
+                                <label for="patient_id">Select Patient:</label>
+                                <select class="form-control" id="patient_id" name="patient_id" required>
+                                    <option value="">Select Patient</option>
+                                    <?php
+                                    // Fetch patients and populate the dropdown
+                                    $patientsSql = "SELECT id, username FROM users WHERE role = 'patient'";
+                                    $patientsStmt = $conn->query($patientsSql);
+                                    while ($row = $patientsStmt->fetch(PDO::FETCH_ASSOC)) {
+                                        echo "<option value='" . $row['id'] . "'>" . $row['username'] . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="prescription_text">Prescription:</label>
+                                <textarea class="form-control" id="prescription_text" name="prescription_text" rows="5"
+                                          required></textarea>
+                            </div>
+                            <button type="submit" name="add_prescription" class="btn btn-primary">Add
+                                Prescription
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mdb-ui-kit@6.4.2/js/mdb.min.js"
+        integrity="sha384-FIX2gN8nHSzwKGnPvimpBz2h/yat5g9vCl9x60m2iHp22vZ+LQdK6YJ4Ym6wevX/"
+        crossorigin="anonymous"></script>
+
+<script>
+    // JavaScript to make the navbar links work with tab content
+    $(document).ready(function () {
+        $('.nav-link').click(function (event) {
+            event.preventDefault(); // Prevent default link behavior
+
+            // Get the target tab pane ID from the link's data-target attribute
+            var targetTab = $(this).data('target');
+
+            // Remove "active" class from all navbar links and tab panes
+            $('.nav-link').removeClass('active');
+            $('.tab-pane').removeClass('active show');
+
+            // Add "active" class to the clicked link and its corresponding tab pane
+            $(this).addClass('active');
+            $(targetTab).addClass('active show');
+        });
+
+        // Chart.js code for the appointment stats pie chart
+        var ctx = document.getElementById('appointmentChart').getContext('2d');
+        var appointmentChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Pending', 'Confirmed', 'Done', 'Ignored'], // Add more labels as needed
+                datasets: [{
+                    label: 'Appointment Stats',
+                    data: [<?php echo $pendingAppointments; ?>, <?php echo $confirmedAppointments; ?>, <?php echo $totalCasesResolved; ?>, 0], // Add more data points as needed
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)'
+                        // Add more colors as needed
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)'
+                        // Add more colors as needed
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                // Customize chart options as needed
+            }
+        });
+    });
+</script>
+</body>
+</html>
