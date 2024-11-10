@@ -30,10 +30,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // --- Update last_active column here ---
           if ($user['role'] == 'doctor') {
-                $updateSql = "UPDATE doctors SET last_active = NOW() WHERE user_id = :user_id";
-                $updateStmt = $conn->prepare($updateSql);
-                $updateStmt->bindParam(':user_id', $user["id"]);
-                $updateStmt->execute();
+           // ... after successful login ...
+
+            $updateSql = "UPDATE users SET last_active = NOW() WHERE id = :user_id";
+            $updateStmt = $conn->prepare($updateSql);
+            $updateStmt->bindParam(':user_id', $user["id"]);
+            $updateStmt->execute();
+
             }
             // -----------------------------------------------------
 
