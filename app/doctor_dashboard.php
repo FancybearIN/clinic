@@ -77,11 +77,12 @@ $totalAppointmentsToDate = $stmt->fetchColumn();
 // --- Fetch Appointments for the Logged-in Doctor ---
 
 $sql = "SELECT a.*, p.username AS patient_name, p.age AS patient_age, 
-               p.email AS patient_email, p.phone AS patient_phone
-        FROM appointments a
-        JOIN users p ON a.patient_id = p.id
-        WHERE a.doctor_id = :doctor_id 
-        ORDER BY a.timeslot DESC"; // Assuming you want to order by timeslot
+           p.email AS patient_email, p.phone AS patient_phone
+    FROM appointments a
+    JOIN users p ON a.patient_id = p.id
+    WHERE a.doctor_id = :doctor_id 
+    ORDER BY a.timeslot DESC";
+ // Assuming you want to order by timeslot
 
 $stmt = $conn->prepare($sql);
 $stmt->bindParam(':doctor_id', $doctorId);
