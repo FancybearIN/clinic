@@ -149,21 +149,9 @@ try {
                 </div>
             </div>
         </section>
-        div class="container">
-        <h2>Welcome, Dr. <?php echo $doctor['name']; ?>!</h2>
+      
 
-        <!-- Doctor Profile Section -->
-        <div class="row">
-            <div class="col-md-12">
-                <h3>Your Profile</h3>
-                <p><strong>ID:</strong> <?php echo $doctor['id']; ?></p>
-                <p><strong>Name:</strong> <?php echo $doctor['name']; ?></p>
-                <p><strong>Position:</strong> <?php echo $doctor['position']; ?></p>
-                <p><strong>Email:</strong> <?php echo $doctor['email']; ?></p>
-            </div>
-        </div>
-
-        Add Prescription (Precaution) Section
+        <!-- Add Prescription (Precaution) Section -->
         <!--<div class="row mt-4">
             <div class="col-md-6">
                 <h3>Add Prescription</h3>
