@@ -118,17 +118,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_prescription'])) {
 
 // --- Fetch data for dashboard statistics ---
 
-// 1. Doctors Online (Assuming you have a way to track online status, e.g., a 'last_active' timestamp in the doctors table)
-$sql = "SELECT COUNT(DISTINCT d.id) FROM doctors d INNER JOIN users u ON d.user_id = u.id WHERE u.role = 'doctor' AND u.last_active > DATE_SUB(NOW(), INTERVAL 5 MINUTE)";
+// 1. Doctors Online (Assuming you have a way to track online status, e.g., a // 
+
+//1. Doctors Online 
+$sql = "SELECT COUNT(DISTINCT d.id) 
+FROM doctors d
+INNER JOIN users u ON d.user_id = u.id
+WHERE u.role = 'doctor' AND u.last_active > DATE_SUB(NOW(), INTERVAL 5 MINUTE)";
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $doctorsOnline = $stmt->fetchColumn();
 
-// 2. Patients Online (Similar to doctors, assuming you track patient online status)
+// 2. Patients Online 
 $sql = "SELECT COUNT(*) FROM users WHERE role = 'patient' AND last_active > DATE_SUB(NOW(), INTERVAL 5 MINUTE)";
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $patientsOnline = $stmt->fetchColumn();
+
 
 // 3. Appointment Stats (You can customize these queries based on your needs)
 $totalAppointments = count($appointments); // Total appointments for the logged-in doctor
