@@ -28,6 +28,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION["username"] = $user["username"];
             $_SESSION["role"] = $user["role"];
 
+            // --- Update last_active column here ---
+            $updateSql = "UPDATE users SET last_active = NOW() WHERE id = :user_id";
+            $updateStmt = $conn->prepare($updateSql);
+            $updateStmt->bindParam(':user_id', $user["id"]);
+            $updateStmt->execute();
+            // ----------------------------------------
+
             // Redirect based on role
             if ($user['role'] == 'doctor') {
                 header("location: /app/doctor_dashboard.php");
