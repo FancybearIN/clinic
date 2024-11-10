@@ -5,10 +5,6 @@ session_start();
 // Include the database configuration file
 include '../config/db_config.php';
 
-// Enable error reporting (for development purposes, disable in production)
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 // Clear browser cache to prevent caching of sensitive data
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
@@ -161,6 +157,11 @@ $stmt = $conn->prepare($sql);
 $stmt->bindParam(':doctor_id', $doctorId);
 $stmt->execute();
 $totalCasesResolved = $stmt->fetchColumn();
+
+// Enable error reporting (for development purposes, disable in production)
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 
 ?>
 
