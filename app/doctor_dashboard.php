@@ -231,7 +231,7 @@ ini_set('display_errors', 1);
                 <li class="nav-item">
                     <a class="nav-link" href="#appointmentsContent" data-toggle="tab"
                        data-target="#appointmentsContent">Appointments</a>
-                       Fatal error: Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'last_active' in 'where clause' in /var/www/html/clinic/app/doctor_dashboard.php:128 Stack trace: #0 /var/www/html/clinic/app/doctor_dashboard.php(128): PDOStatement->execute() #1 {main} thrown in /var/www/html/clinic/app/doctor_dashboard.php on line 128        </li>
+                        </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#prescriptionsContent" data-toggle="tab"
                        data-target="#prescriptionsContent">Prescriptions</a>
