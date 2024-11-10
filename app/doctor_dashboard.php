@@ -45,6 +45,35 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'doctor') {
 // Get the logged-in doctor's ID from the session
 $doctorId = $_SESSION['id'];
 
+// --- Fetch data for dashboard statistics ---
+
+// 1. Doctors Online 
+$sql = "SELECT COUNT(DISTINCT d.id) 
+        FROM doctors d
+        INNER JOIN users u ON d.user_id = u.id
+        WHERE u.role = 'doctor' AND u.last_active > DATE_SUB(NOW(), INTERVAL 5 MINUTE)";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$doctorsOnline = $stmt->fetchColumn();
+
+// 2. Patients Online 
+$sql = "SELECT COUNT(*) FROM users WHERE role = 'patient' AND last_active > DATE_SUB(NOW(), INTERVAL 5 MINUTE)";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$patientsOnline = $stmt->fetchColumn();
+
+// Fetch the total number of doctors
+$sql = "SELECT COUNT(*) FROM doctors";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$totalDoctors = $stmt->fetchColumn();
+
+// Fetch the total number of appointments to date
+$sql = "SELECT COUNT(*) FROM appointments WHERE DATE(timeslot) <= CURDATE()";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$totalAppointmentsToDate = $stmt->fetchColumn();
+
 // --- Fetch Appointments for the Logged-in Doctor ---
 
 $sql = "SELECT a.*, p.username AS patient_name, p.age AS patient_age, 
@@ -58,6 +87,34 @@ $stmt = $conn->prepare($sql);
 $stmt->bindParam(':doctor_id', $doctorId);
 $stmt->execute();
 $appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// 3. Appointment Stats (You can customize these queries based on your needs)
+$totalAppointments = count($appointments); // Total appointments for the logged-in doctor
+$pendingAppointments = count(array_filter($appointments, function($app) { return $app['status'] == 'pending'; }));
+$confirmedAppointments = count(array_filter($appointments, function($app) { return $app['status'] == 'confirmed'; }));
+// ... add more stats as needed
+
+// 4. Total Patients
+$sql = "SELECT COUNT(*) FROM users WHERE role = 'patient'";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$totalPatients = $stmt->fetchColumn();
+
+// 5. Today's Appointments
+$today = date('Y-m-d');
+$sql = "SELECT COUNT(*) FROM appointments WHERE doctor_id = :doctor_id AND DATE(timeslot) = :today";
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(':doctor_id', $doctorId);
+$stmt->bindParam(':today', $today);
+$stmt->execute();
+$todaysAppointments = $stmt->fetchColumn();
+
+// 6. Total Cases Resolved (Assuming you have a way to track resolved cases, e.g., a 'status' field in the appointments table)
+$sql = "SELECT COUNT(*) FROM appointments WHERE doctor_id = :doctor_id AND status = 'done'";
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(':doctor_id', $doctorId);
+$stmt->execute();
+$totalCasesResolved = $stmt->fetchColumn();
 
 // Handle Appointment Status Updates
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
@@ -115,51 +172,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_prescription'])) {
         }
     }
 }
-
-// --- Fetch data for dashboard statistics ---
-
-
-// Fetch the total number of doctors
-$sql = "SELECT COUNT(*) FROM doctors";
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$totalDoctors = $stmt->fetchColumn();
-
-
-// Fetch the total number of appointments to date
-$sql = "SELECT COUNT(*) FROM appointments WHERE DATE(timeslot) <= CURDATE()";
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$totalAppointmentsToDate = $stmt->fetchColumn();
-
-
-// 3. Appointment Stats (You can customize these queries based on your needs)
-$totalAppointments = count($appointments); // Total appointments for the logged-in doctor
-$pendingAppointments = count(array_filter($appointments, function($app) { return $app['status'] == 'pending'; }));
-$confirmedAppointments = count(array_filter($appointments, function($app) { return $app['status'] == 'confirmed'; }));
-// ... add more stats as needed
-
-// 4. Total Patients
-$sql = "SELECT COUNT(*) FROM users WHERE role = 'patient'";
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$totalPatients = $stmt->fetchColumn();
-
-// 5. Today's Appointments
-$today = date('Y-m-d');
-$sql = "SELECT COUNT(*) FROM appointments WHERE doctor_id = :doctor_id AND DATE(timeslot) = :today";
-$stmt = $conn->prepare($sql);
-$stmt->bindParam(':doctor_id', $doctorId);
-$stmt->bindParam(':today', $today);
-$stmt->execute();
-$todaysAppointments = $stmt->fetchColumn();
-
-// 6. Total Cases Resolved (Assuming you have a way to track resolved cases, e.g., a 'status' field in the appointments table)
-$sql = "SELECT COUNT(*) FROM appointments WHERE doctor_id = :doctor_id AND status = 'done'";
-$stmt = $conn->prepare($sql);
-$stmt->bindParam(':doctor_id', $doctorId);
-$stmt->execute();
-$totalCasesResolved = $stmt->fetchColumn();
 
 // Enable error reporting (for development purposes, disable in production)
 error_reporting(E_ALL);
@@ -301,6 +313,22 @@ ini_set('display_errors', 1);
                     <div class="col-md-3">
                         <div class="card">
                             <div class="card-body">
+                                <h5 class="card-title">Doctors Online</h5>
+                                <p class="card-text"><?php echo $doctorsOnline; ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Patients Online</h5>
+                                <p class="card-text"><?php echo $patientsOnline; ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
                             <h5 class="card-title">Total Appointments To Date</h5>
                             <p class="card-text"><?php echo $totalAppointmentsToDate; ?></p>
                             </div>
@@ -387,7 +415,7 @@ ini_set('display_errors', 1);
                                             <form method="post"
                                                   action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                                                 <input type="hidden" name="appointment_id"
-                                                       value="<?php echo $appointment['id']; ?>">
+                                                value="<?php echo $appointment['id']; ?>">
                                                 <select name="status" class="form-control">
                                                     <option value="pending" <?php if ($appointment['status'] == 'pending') echo 'selected'; ?>>
                                                         Pending
@@ -406,8 +434,7 @@ ini_set('display_errors', 1);
                                                     </option>
                                                 </select>
                                                 <button type="submit" name="update_status"
-                                                        class="btn btn-sm btn-primary
-                                                        mt-2">Update
+                                                        class="btn btn-sm btn-primary mt-2">Update
                                                 </button>
                                             </form>
 
@@ -474,22 +501,23 @@ ini_set('display_errors', 1);
                     </div>
                 </div>
             </div>
-                    <div class="tab-pane fade" id="specialtyContent" role="tabpanel" aria-labelledby="specialty-tab">
-                     <h2>Your Specialty</h2>
-                    <?php
-                    // Fetch the doctor's specialty from the database
-                    $sql = "SELECT specialty FROM doctors WHERE user_id = :doctor_id";
-                    $stmt = $conn->prepare($sql);
-                    $stmt->bindParam(':doctor_id', $doctorId);
-                    $stmt->execute();
-                    $doctorSpecialty = $stmt->fetchColumn();
+            <!-- Specialty Content (Add this section) -->
+            <div class="tab-pane fade" id="specialtyContent" role="tabpanel" aria-labelledby="specialty-tab">
+                <h2>Your Specialty</h2>
+                <?php
+                // Fetch the doctor's specialty from the database
+                $sql = "SELECT specialty FROM doctors WHERE user_id = :doctor_id";
+                $stmt = $conn->prepare($sql);
+                $stmt->bindParam(':doctor_id', $doctorId);
+                $stmt->execute();
+                $doctorSpecialty = $stmt->fetchColumn();
 
-                     // Display the specialty
-                        echo "<p>Your specialty is: <strong>" . $doctorSpecialty . "</strong></p>";
+                // Display the specialty
+                echo "<p>Your specialty is: <strong>" . $doctorSpecialty . "</strong></p>";
 
-                    // You can add a form here to allow doctors to update their specialty if needed
-                    ?>
-                </div>
+                // You can add a form here to allow doctors to update their specialty if needed
+                ?>
+            </div>
         </div>
     </div>
 </main>

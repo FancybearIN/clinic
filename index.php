@@ -121,9 +121,9 @@ try {
                 <a href="/app/registor.php">Register</a> 
             <?php endif; ?>
 
-        </nav>
+        </nav>ppointment.
 
-        <a href="app/appointment.php" class="link-btn">Make Appointment</a>
+        <a href="app/registor.php" class="link-btn">Registor</a>
 
         <div id="menu-btn" class="fas fa-bars"></div>
     </header>
