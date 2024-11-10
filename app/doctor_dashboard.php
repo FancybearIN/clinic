@@ -89,20 +89,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
     <style>
         /* ... Your existing styles ... */
         /* Add some basic styling for the navbar */
-        .navbar {
-            background-color: #f8f9fa;
-            padding: 10px;
-            border-bottom: 1px solid #dee2e6;
+        .header {
+            background: #fff;
+            position: fixed;
+            top:0; left: 0; right: 0;
+            z-index: 1000;
+            box-shadow: 0 .5rem 1.5rem rgba(0,0,0,.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding:2rem 9%;
         }
 
-        .navbar a {
-            color: #343a40;
-            padding: 5px 10px;
-            text-decoration: none;
+        .header .navbar a {
+            color: #333;
+            font-size: 1.7rem;
+            padding:0 1rem;
         }
 
-        .navbar a.active {
-            font-weight: bold;
+        .header .navbar a:hover {
+            color:var(--main-color);
+        }
+
+        .header .link-btn {
+            color: #333;
+            font-size: 1.7rem;
+            padding:0 1rem;
+        }
+
+        .header .link-btn:hover {
+            color:var(--main-color);
         }
 
         /* Style the active tab content */
@@ -114,17 +130,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
 <body>
 
 <header class="header">
-    <a href="/" class="logo"> <i class="fas fa-heartbeat"></i> Dr Pawan arora Clinic </a>
+        <a href="/" class="logo"> <i class="fas fa-heartbeat"></i> Dr Pawan arora Clinic </a>
 
-    <nav class="navbar">
-        <a href="#dashboard" class="nav-link active" data-toggle="tab" data-target="#dashboardContent">Dashboard</a>
-        <a href="#appointments" class="nav-link" data-toggle="tab" data-target="#appointmentsContent">Appointments</a>
-        <a href="#prescriptions" class="nav-link" data-toggle="tab" data-target="#prescriptionsContent">Prescriptions</a>
-        <a href="#profile" class="nav-link" data-toggle="tab" data-target="#profileContent">Profile</a>
-    </nav>
+        <nav class="navbar">
+            <a href="#dashboardContent" class="nav-link active" data-toggle="tab" data-target="#dashboardContent">Home</a>
+            <a href="#about" class="nav-link" data-toggle="tab" data-target="#appointmentsContent">About</a>
+            <a href="#footer" class="nav-link" data-toggle="tab" data-target="#prescriptionsContent">Services</a>
+            <a href="/app/appointment.php" class="nav-link" data-toggle="tab" data-target="#profileContent">Contact</a> 
+            <?php if (!isset($_SESSION['loggedin'])): ?> 
+                <a href="/app/registor.php">Register</a> 
+            <?php endif; ?>
 
-    <div id="menu-btn" class="fas fa-bars"></div>
-</header>
+        </nav>
+
+        <a href="app/appointment.php" class="link-btn">Make Appointment</a>
+
+        <div id="menu-btn" class="fas fa-bars"></div>
+    </header>
 
 <!-- Main Content Area -->
 <main class="main-content">
