@@ -117,11 +117,11 @@ try {
             <a href="#about">About</a>
             <a href="#footer">Services</a>
             <a href="/app/appointment.php">Contact</a> 
-            <?php if (!isset($_SESSION['loggedin'])): ?> 
+            <!-- <?php if (!isset($_SESSION['loggedin'])): ?> 
                 <a href="/app/registor.php">Register</a> 
-            <?php endif; ?>
+            <?php endif; ?> -->
 
-        </nav>ppointment.
+        </nav>
 
         <a href="app/registor.php" class="link-btn">Registor</a>
 
