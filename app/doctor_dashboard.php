@@ -101,7 +101,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
 
             <a href="/"><i class="fas fa-user-md"></i> Doctor</a>
            
-            <<?php if: ?>
+            <?php if: ?>
                 <!-- Profile Dropdown -->
                 <div class="profile-dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
