@@ -262,20 +262,8 @@ ini_set('display_errors', 1);
             </span>
             <!-- Avatar -->
             <div class="dropdown">
-    <a 
-        data-mdb-dropdown-init
-        class="dropdown-toggle d-flex align-items-center hidden-arrow"
-        href="#"
-        id="navbarDropdownMenuAvatar"
-        role="button"
-        aria-expanded="false"
-    >
-        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
-             class="rounded-circle"
-             height="25"
-             alt="Black and White Portrait of a Man"
-             loading="lazy"
-        />
+                <a data-mdb-dropdown-init  class="dropdown-toggled-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
+                <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="Black and White Portrait of a Man" loading="lazy"/>
     </a>
     <ul class="dropdown-menu" dropdown-menu-endaria-labelledby="navbarDropdownMenuAvatar">
         <li>
