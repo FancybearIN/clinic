@@ -249,38 +249,33 @@ ini_set('display_errors', 1);
             </span>
             <!-- Avatar -->
             <div class="dropdown">
-                <a
-                        data-mdb-dropdown-init
-                        class="dropdown-toggle d-flex align-items-center hidden-arrow"
-                        href="#"
-                        id="navbarDropdownMenuAvatar"
-                        role="button"                        aria-expanded="false">
-                    <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
-                            class="rounded-circle"
-                            height="25"
-                            alt="Black and White Portrait of a Man"
-                            loading="lazy"
-                    />
-                </a>
-                <ul
-                        class="dropdown-menu dropdown-menu-end"
-                        aria-labelledby="navbarDropdownMenuAvatar"
-                >
-                    <li>
-                        <a class="dropdown-item" href="#">My profile</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#">Settings</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="logout.php">Logout</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <!-- Right elements -->
-    </div>
-    <!-- Container wrapper -->
+    <a 
+        data-mdb-dropdown-init
+        class="dropdown-toggle d-flex align-items-center hidden-arrow"
+        href="#"
+        id="navbarDropdownMenuAvatar"
+        role="button"
+        aria-expanded="false"
+    >
+        <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp"
+             class="rounded-circle"
+             height="25"
+             alt="Black and White Portrait of a Man"
+             loading="lazy"
+        />
+    </a>
+    <ul class="dropdown-menu" dropdown-menu-endaria-labelledby="navbarDropdownMenuAvatar">
+        <li>
+            <a class="dropdown-item" href="#">My profile</a>
+        </li>
+        <li>
+        <a class="dropdown-item" href="#specialtyContent" data-toggle="tab" data-target="#specialtyContent">Specialty</a> 
+        <li>
+            <a class="dropdown-item" href="logout.php">Logout</a>
+        </li>
+    </ul>
+</div>
+
 </nav>
 <!-- Navbar -->
 
@@ -479,6 +474,22 @@ ini_set('display_errors', 1);
                     </div>
                 </div>
             </div>
+                    <div class="tab-pane fade" id="specialtyContent" role="tabpanel" aria-labelledby="specialty-tab">
+                     <h2>Your Specialty</h2>
+                    <?php
+                    // Fetch the doctor's specialty from the database
+                    $sql = "SELECT specialty FROM doctors WHERE user_id = :doctor_id";
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bindParam(':doctor_id', $doctorId);
+                    $stmt->execute();
+                    $doctorSpecialty = $stmt->fetchColumn();
+
+                     // Display the specialty
+                        echo "<p>Your specialty is: <strong>" . $doctorSpecialty . "</strong></p>";
+
+                    // You can add a form here to allow doctors to update their specialty if needed
+                    ?>
+                </div>
         </div>
     </div>
 </main>
