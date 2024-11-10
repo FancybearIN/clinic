@@ -163,12 +163,12 @@ try {
             </div>
         </div>
 
-        <!-- Add Prescription (Precaution) Section -->
-        <div class="row mt-4">
+        Add Prescription (Precaution) Section
+        <!--<div class="row mt-4">
             <div class="col-md-6">
                 <h3>Add Prescription</h3>
-                <?php if (isset($successMessage)) { echo "<p class='text-success'>$successMessage</p>"; } ?>
-                <?php if (isset($errorMessage)) { echo "<p class='text-danger'>$errorMessage</p>"; } ?>
+               //  <?php if (isset($successMessage)) { echo "<p class='text-success'>$successMessage</p>"; } ?> 
+                 <?php if (isset($errorMessage)) { echo "<p class='text-danger'>$errorMessage</p>"; } ?> 
                 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                     <input type="hidden" name="patient_id" value="<?php echo $appointment['patient_id']; ?>"> <div class="form-group">
                         <label for="medication">Medication:</label>
@@ -181,7 +181,7 @@ try {
                     <button type="submit" name="add_precaution" class="btn btn-primary">Add Prescription</button>
                 </form>
             </div>
-        </div>
+        </div>-->
 
         <!-- --- ABOUT SECTION --- -->
           <!-- --- ABOUT SECTION --- -->
