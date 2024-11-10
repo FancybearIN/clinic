@@ -18,3 +18,17 @@ btnPopup.addEventListener('click', ()=> {
 iconClose.addEventListener('click', ()=> {
     wrap.classList.remove('active-popup');
 });
+
+{/* <script> */}
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize dropdowns
+        const dropdowns = document.querySelectorAll('.dropdown-toggle');
+        dropdowns.forEach(dropdown => {
+            dropdown.addEventListener('click', function(event) {
+                event.preventDefault();
+                const dropdownMenu = this.nextElementSibling;
+                dropdownMenu.classList.toggle('show');
+            });
+        });
+    });
+{/* </script> */}

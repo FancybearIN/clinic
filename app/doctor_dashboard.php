@@ -256,26 +256,32 @@ ini_set('display_errors', 1);
 
         <!-- Right elements -->
         <div class="d-flex align-items-center">
-            <!-- Icon -->
-            <span class="navbar-text me-3">
-                Welcome, Doctor!
-            </span>
-            <!-- Avatar -->
-            <div class="dropdown">
-                <a data-mdb-dropdown-init  class="dropdown-toggled-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
-                <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="Black and White Portrait of a Man" loading="lazy"/>
-    </a>
-    <ul class="dropdown-menu" dropdown-menu-endaria-labelledby="navbarDropdownMenuAvatar">
-        <li>
-            <a class="dropdown-item" href="#">My profile</a>
-        </li>
-        <li>
-        <a class="dropdown-item" href="#specialtyContent" data-toggle="tab" data-target="#specialtyContent">Specialty</a> 
-        <li>
-            <a class="dropdown-item" href="logout.php">Logout</a>
-        </li>
-    </ul>
+    <!-- Icon -->
+    <span class="navbar-text me-3">
+        Welcome, Doctor!
+    </span>
+    <!-- Avatar -->
+    <div class="dropdown">
+        <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#" id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
+            <img src="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp" class="rounded-circle" height="25" alt="Black and White Portrait of a Man" loading="lazy"/>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuAvatar">
+            <li>
+                <a class="dropdown-item" href="#">My profile</a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="#specialtyContent" data-toggle="tab" data-target="#specialtyContent">Specialty</a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="logout.php">Logout</a>
+            </li>
+        </ul>
+    </div>
 </div>
+
+<!-- Include MDBootstrap CSS and JS -->
+<!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.0/mdb.min.css" rel="stylesheet"> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.10.0/mdb.min.js"></script> -->
 
 </nav>
 <!-- Navbar -->
