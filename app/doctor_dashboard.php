@@ -118,16 +118,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_prescription'])) {
 
 // --- Fetch data for dashboard statistics ---
 
-// 1. Doctors Online (Assuming you have a way to track online status, e.g., a // 
 
-//1. Doctors Online 
-$sql = "SELECT COUNT(DISTINCT d.id) 
-FROM doctors d
-INNER JOIN users u ON d.user_id = u.id
-WHERE u.role = 'doctor' AND u.last_active > DATE_SUB(NOW(), INTERVAL 5 MINUTE)";
+// Fetch the total number of doctors
+$sql = "SELECT COUNT(*) FROM doctors";
 $stmt = $conn->prepare($sql);
 $stmt->execute();
-$doctorsOnline = $stmt->fetchColumn();
+$totalDoctors = $stmt->fetchColumn();
+
 
 // 2. Patients Online 
 $sql = "SELECT COUNT(*) FROM users WHERE role = 'patient' AND last_active > DATE_SUB(NOW(), INTERVAL 5 MINUTE)";
@@ -301,8 +298,8 @@ ini_set('display_errors', 1);
                     <div class="col-md-3">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Doctors Online</h5>
-                                <p class="card-text"><?php echo $doctorsOnline; ?></p>
+                            <h5 class="card-title">Total Doctors</h5> 
+                            <p class="card-text"><?php echo $totalDoctors; ?></p>
                             </div>
                         </div>
                     </div>
