@@ -80,6 +80,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
     }
 }
 
+// Handle Appointment Deletion
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_appointment'])) {
+    $appointmentId = $_POST['appointment_id'];
+
+    $sql = "DELETE FROM appointments WHERE id = :appointment_id";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':appointment_id', $appointmentId);
+
+    if ($stmt->execute()) {
+        $successMessage = "Appointment deleted successfully!";
+    } else {
+        $errorMessage = "Error deleting appointment.";
+    }
+}
+
 // Handle Prescription Submission
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_prescription'])) {
     // Get the form data
@@ -104,6 +119,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_prescription'])) {
         }
     }
 }
+
+// --- Fetch data for dashboard statistics ---
+
+// 1. Doctors Online (Assuming you have a way to track online status, e.g., a 'last_active' timestamp in the doctors table)
+$sql = "SELECT COUNT(*) FROM doctors WHERE last_active > DATE_SUB(NOW(), INTERVAL 5 MINUTE)"; // Adjust the interval as needed
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$doctorsOnline = $stmt->fetchColumn();
+
+// 2. Patients Online (Similar to doctors, assuming you track patient online status)
+$sql = "SELECT COUNT(*) FROM users WHERE role = 'patient' AND last_active > DATE_SUB(NOW(), INTERVAL 5 MINUTE)";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$patientsOnline = $stmt->fetchColumn();
+
+// 3. Appointment Stats (You can customize these queries based on your needs)
+$totalAppointments = count($appointments); // Total appointments for the logged-in doctor
+$pendingAppointments = count(array_filter($appointments, function($app) { return $app['status'] == 'pending'; }));
+$confirmedAppointments = count(array_filter($appointments, function($app) { return $app['status'] == 'confirmed'; }));
+// ... add more stats as needed
+
+// 4. Total Patients
+$sql = "SELECT COUNT(*) FROM users WHERE role = 'patient'";
+$stmt = $conn->prepare($sql);
+$stmt->execute();
+$totalPatients = $stmt->fetchColumn();
+
+// 5. Today's Appointments
+$today = date('Y-m-d');
+$sql = "SELECT COUNT(*) FROM appointments WHERE doctor_id = :doctor_id AND DATE(timeslot) = :today";
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(':doctor_id', $doctorId);
+$stmt->bindParam(':today', $today);
+$stmt->execute();
+$todaysAppointments = $stmt->fetchColumn();
+
+// 6. Total Cases Resolved (Assuming you have a way to track resolved cases, e.g., a 'status' field in the appointments table)
+$sql = "SELECT COUNT(*) FROM appointments WHERE doctor_id = :doctor_id AND status = 'done'";
+$stmt = $conn->prepare($sql);
+$stmt->bindParam(':doctor_id', $doctorId);
+$stmt->execute();
+$totalCasesResolved = $stmt->fetchColumn();
+
 ?>
 
 <!DOCTYPE html>
@@ -116,6 +174,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_prescription'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdb-ui-kit@6.4.2/css/mdb.min.css"
           integrity="sha384-rVonjxPhWXc2uYVSFDqK+EBidaK+Ouo/bK49mRU2bVmYdrjQVw+wtnBJWxbC4iL+t" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         /* Add custom styles here if needed */
         .wrap {
@@ -155,7 +215,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_prescription'])) {
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Navbar brand -->
             <a href="/" class="logo navbar-brand mt-2 mt-lg-0"> 
-                <i class="fas fa-heartbeat"></i> 
+                <i class="fas fa-heartbeat"></i> Dr Pawan arora Clinic 
             </a>
 
             <!-- Left links -->
@@ -227,15 +287,68 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_prescription'])) {
             <!-- Dashboard Content -->
             <div class="tab-pane fade show active" id="dashboardContent" role="tabpanel"
                  aria-labelledby="dashboard-tab">
-                <!-- ... Your existing Dashboard Content ... -->
                 <h2>Welcome to your Dashboard, Dr. <?php echo $_SESSION['username']; ?>!</h2>
+
+                <!-- Dashboard Statistics -->
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Doctors Online</h5>
+                                <p class="card-text"><?php echo $doctorsOnline; ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Patients Online</h5>
+                                <p class="card-text"><?php echo $patientsOnline; ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Patients</h5>
+                                <p class="card-text"><?php echo $totalPatients; ?></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Today's Appointments</h5>
+                                <p class="card-text"><?php echo $todaysAppointments; ?></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Appointment Stats</h5>
+                                <canvas id="appointmentChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Cases Resolved</h5>
+                                <p class="card-text"><?php echo $totalCasesResolved; ?></p>
+                                <!-- You can add a progress bar or other visualization here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Appointments Content -->
             <div class="tab-pane fade" id="appointmentsContent" role="tabpanel" aria-labelledby="appointments-tab">
-                <!-- ... Your existing Appointments Content ... -->
                 <h2>Manage Your Appointments</h2>
-                <!-- ... Your existing Appointment Tabs ... -->
 
                 <!-- Appointment Tab Content -->
                 <div class="tab-content" id="appointmentTabContent">
@@ -294,76 +407,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_prescription'])) {
                                                     </option>
                                                 </select>
                                                 <button type="submit" name="update_status"
-                                                        class="btn btn-sm btn-primary mt-2">Update
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                <?php endforeach;
-                            } else { ?>
-                                <tr>
-                                    <td colspan="9">No appointments found.</td>
-                                </tr>
-                            <?php } ?>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- ... Your existing Latest and Previous Appointments Tabs ... -->
-
-                </div>
-            </div>
-
-            <!-- Prescriptions Content -->
-            <div class="tab-pane fade" id="prescriptionsContent" role="tabpanel"
-                 aria-labelledby="prescriptions-tab">
-                <h2>Manage Prescriptions</h2>
-
-                <div class="row mt-4">
-                    <div class="col-md-12">
-                        <h3>Add New Prescription</h3>
-                        <?php if (isset($prescriptionSuccess)) {
-                            echo "<p class='text-success'>$prescriptionSuccess</p>";
-                        } ?>
-                        <?php if (isset($prescriptionError)) {
-                            echo "<p class='text-danger'>$prescriptionError</p>";
-                        } ?>
-                        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-                            <div class="form-group">
-                                <label for="patient_id">Select Patient:</label>
-                                <select class="form-control" id="patient_id" name="patient_id" required>
-                                    <option value="">Select Patient</option>
-                                    <?php
-                                    // Fetch patients and populate the dropdown
-                                    $patientsSql = "SELECT id, username FROM users WHERE role = 'patient'";
-                                    $patientsStmt = $conn->query($patientsSql);
-                                    while ($row = $patientsStmt->fetch(PDO::FETCH_ASSOC)) {
-                                        echo "<option value='" . $row['id'] . "'>" . $row['username'] . "</option>";
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="prescription_text">Prescription:</label>
-                                <textarea class="form-control" id="prescription_text" name="prescription_text" rows="5"
-                                          required></textarea>
-                            </div>
-                            <button type="submit" name="add_prescription" class="btn btn-primary">Add
-                                Prescription
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</main>
-
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mdb-ui-kit@6.4.2/js/mdb.min.js"
-        integrity="sha384-FIX2gN8nHSzwKGnPvimpBz2h/yat5g9vCl9x60m2iHp22vZ+LQdK6YJ4Ym6wevX/"
-        crossorigin="anonymous"></script>
-</body>
-</html>
+                                                        class="btn btn-sm btn-primary
