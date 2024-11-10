@@ -119,7 +119,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_prescription'])) {
 // --- Fetch data for dashboard statistics ---
 
 // 1. Doctors Online (Assuming you have a way to track online status, e.g., a 'last_active' timestamp in the doctors table)
-$sql = "SELECT COUNT(*) FROM doctors WHERE last_active > DATE_SUB(NOW(), INTERVAL 5 MINUTE)"; // Adjust the interval as needed
+$sql = "SELECT COUNT(DISTINCT d.id) FROM doctors d INNER JOIN users u ON d.user_id = u.id WHERE u.role = 'doctor' AND u.last_active > DATE_SUB(NOW(), INTERVAL 5 MINUTE)";
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $doctorsOnline = $stmt->fetchColumn();
