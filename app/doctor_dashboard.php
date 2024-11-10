@@ -126,11 +126,11 @@ $stmt->execute();
 $totalDoctors = $stmt->fetchColumn();
 
 
-// 2. Patients Online 
-$sql = "SELECT COUNT(*) FROM users WHERE role = 'patient' AND last_active > DATE_SUB(NOW(), INTERVAL 5 MINUTE)";
+// Fetch the total number of appointments to date
+$sql = "SELECT COUNT(*) FROM appointments WHERE DATE(timeslot) <= CURDATE()";
 $stmt = $conn->prepare($sql);
 $stmt->execute();
-$patientsOnline = $stmt->fetchColumn();
+$totalAppointmentsToDate = $stmt->fetchColumn();
 
 
 // 3. Appointment Stats (You can customize these queries based on your needs)
@@ -301,8 +301,8 @@ ini_set('display_errors', 1);
                     <div class="col-md-3">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Patients Online</h5>
-                                <p class="card-text"><?php echo $patientsOnline; ?></p>
+                            <h5 class="card-title">Total Appointments To Date</h5>
+                            <p class="card-text"><?php echo $totalAppointmentsToDate; ?></p>
                             </div>
                         </div>
                     </div>
